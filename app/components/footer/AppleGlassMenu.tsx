@@ -29,15 +29,17 @@ const AppleGlassMenu = () => {
               className="glass-item"
               title={link.hoverText}
             >
-              <Image
-                src={link.icon}
-                alt={link.name}
-                width={56}
-                height={56}
-                className="glass-icon"
-                quality={90}
-                priority={index < 3}
-              />
+              <div className="glass-icon-wrapper">
+                <Image
+                  src={link.icon}
+                  alt={link.name}
+                  width={56}
+                  height={56}
+                  className="glass-icon"
+                  quality={90}
+                  priority={index < 3}
+                />
+              </div>
             </a>
           ))}
         </div>
@@ -120,25 +122,82 @@ const AppleGlassMenu = () => {
           transform: scale(0.95);
         }
 
-        .glass-icon {
+        .glass-icon-wrapper {
           width: 56px;
           height: 56px;
-          object-fit: contain;
+          min-width: 56px;
+          min-height: 56px;
+          max-width: 56px;
+          max-height: 56px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          border-radius: 12px;
+          background: rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-icon {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
         }
 
         @media (max-width: 768px) {
           .glass-content {
-            gap: 0.75rem;
-            padding: 8px 16px;
+            gap: 0.5rem;
+            padding: 10px 12px;
           }
 
-          .glass-icon {
-            width: 40px;
-            height: 40px;
+          .glass-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            min-height: 48px;
+            max-width: 48px;
+            max-height: 48px;
           }
 
           .glass-container--rounded {
             border-radius: 2rem;
+          }
+
+          .glass-container {
+            box-shadow: 0 8px 8px rgba(0, 0, 0, 0.25), 0 0 24px rgba(0, 0, 0, 0.15);
+            max-width: calc(100vw - 32px);
+            margin: 0 16px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .glass-content {
+            gap: 0.4rem;
+            padding: 8px 10px;
+          }
+
+          .glass-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            max-width: 44px;
+            max-height: 44px;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .glass-content {
+            gap: 0.3rem;
+            padding: 8px;
+          }
+
+          .glass-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            max-width: 40px;
+            max-height: 40px;
           }
         }
       `}</style>

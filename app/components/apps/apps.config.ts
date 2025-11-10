@@ -12,14 +12,14 @@ export const APPS: App[] = [
     id: 'prayai',
     title: 'PrayAI',
     description: 'AI-powered prayer and spiritual guidance',
-    imageUrl: '/apps/prayai.png',
+    imageUrl: '/pray.png',
     link: 'https://prayai.org',
   },
   {
     id: 'fakeflex',
     title: 'FakeFlex',
     description: 'AI virtual try-on with watermarks',
-    imageUrl: '/apps/fakeflex.png',
+    imageUrl: '/fakeflex.png',
     link: 'https://fakeflex.app',
   },
   {

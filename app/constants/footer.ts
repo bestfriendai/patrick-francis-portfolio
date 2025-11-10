@@ -2,6 +2,18 @@ import { FooterLink } from "../types";
 
 export const FOOTER_LINKS: FooterLink[] = [
   {
+    name: 'PrayAI',
+    hoverText: 'PrayAI - AI-powered spiritual guidance',
+    icon: '/pray.png',
+    url: 'https://prayai.org',
+  },
+  {
+    name: 'FakeFlex',
+    hoverText: 'FakeFlex - AI virtual try-on',
+    icon: '/fakeflex.png',
+    url: 'https://fakeflex.app',
+  },
+  {
     name: 'X',
     hoverText: '@dontfollowpat',
     icon: '/icons/x.png',
