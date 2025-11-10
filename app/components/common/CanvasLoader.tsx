@@ -45,9 +45,9 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
 
   // Wait for assets to load AND render before showing
   useEffect(() => {
-    if (progress === 100 && !isReady) {
-      // Add extra time on mobile to ensure everything renders
-      const readyDelay = isMobile ? 2000 : 1000;
+    if (progress >= 95 && !isReady) {
+      // Shorter delay - show content faster
+      const readyDelay = isMobile ? 500 : 300;
       setTimeout(() => {
         setIsReady(true);
       }, readyDelay);
@@ -106,7 +106,7 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
           </Suspense>
           <AdaptiveDpr pixelated={false}/>
         </Canvas>
-        <EnhancedLoader progress={isReady ? 100 : Math.min(progress, 99)} />
+        <EnhancedLoader progress={isReady ? 100 : progress} />
       </div>
       <ThemeSwitcher />
       <ScrollHint />

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Canvas3DAnimation from '../animations/Canvas3DAnimation';
+import { isMobile } from 'react-device-detect';
 
 interface LoadingStage {
   threshold: number;
@@ -74,19 +75,21 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
 
       {/* Main loader content */}
       <div className="relative z-10 flex flex-col items-center gap-8 px-4">
-        {/* 3D Canvas Animation from /dist folder */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Canvas3DAnimation
-            animationType="sphere-scan"
-            width={180}
-            height={180}
-            className="drop-shadow-2xl"
-          />
-        </motion.div>
+        {/* 3D Canvas Animation from /dist folder - Skip on mobile for better performance */}
+        {!isMobile && (
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Canvas3DAnimation
+              animationType="sphere-scan"
+              width={140}
+              height={140}
+              className="drop-shadow-2xl"
+            />
+          </motion.div>
+        )}
 
         {/* Logo animation */}
         <motion.div
@@ -144,8 +147,8 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
             />
           </motion.div>
 
-          {/* Particle effects */}
-          {[...Array(5)].map((_, i) => (
+          {/* Particle effects - Reduce count for performance */}
+          {!isMobile && [...Array(3)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-blue-400 rounded-full"
