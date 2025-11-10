@@ -3,10 +3,8 @@ import { Edges, MeshPortalMaterial, Text, TextProps, useScroll, useTexture } fro
 import { useFrame, useThree } from '@react-three/fiber';
 import { usePortalStore } from '@stores';
 import gsap from "gsap";
-import { useEffect, useRef } from 'react';
-import { isMobile } from 'react-device-detect';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { TriangleGeometry } from './Triangle';
 
 interface GridTileProps {
   id: string;
@@ -31,25 +29,29 @@ const GridTile = (props: GridTileProps) => {
   const isActive = usePortalStore((state) => state.activePortalId === id);
   const activePortalId = usePortalStore((state) => state.activePortalId);
   const data = useScroll();
-  const texture = imageUrl ? useTexture(imageUrl) : null;
+  // Always call useTexture hook, even if imageUrl is undefined
+  const texture = useTexture(imageUrl || '/placeholder.png');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Hanlde the hover box and title animation for mobile.
     if (isMobile && titleRef.current) {
-      const isWork = id === 'work';
+      // Show titles on mobile with better visibility
       gsap.to(titleRef.current, {
-        fontSize: 0.13,
-        maxWidth: 4,
-        color: isWork ? '#FFF' : '#888',
-        letterSpacing: 0.4,
-      });
-      gsap.to(titleRef.current.position, {
-        x: isWork ? 1: -1,
-        y: isWork ? -1.7 : 1.5,
+        fillOpacity: 1,
         duration: 0.5,
       });
     }
-  }, []);
+  }, [isMobile]);
 
   useFrame(() => {
     const d = data.range(0.95, 0.05);
@@ -173,17 +175,16 @@ const GridTile = (props: GridTileProps) => {
   };
 
   const getGeometry = () => {
-    if (!isMobile) {
-      return <planeGeometry args={[4, 4, 1]} />
+    // Mobile: Portrait rectangle (taller than wide)
+    // Desktop: Square tiles
+    if (isMobile) {
+      return <planeGeometry args={[2.5, 4, 1]} />
     }
-
-    const isWork = id === 'work';
-    const points = isWork ?
-      [[-1, 2, 0], [-1, -2, 0], [3, -2, 0]] :
-      [[-3, 2, 0], [1, -2, 0], [1, 2, 0]];
-
-    return <primitive object={TriangleGeometry({ points })} attach="geometry" />
+    return <planeGeometry args={[4, 4, 1]} />
   };
+
+  const size = isMobile ? 3 : 4;
+  const imageSize: [number, number] = isMobile ? [2.2, 4.5] : [3, 6];
 
   return (
     <mesh ref={gridRef}
@@ -194,7 +195,7 @@ const GridTile = (props: GridTileProps) => {
       { getGeometry() }
       <group>
         <mesh position={[0, 0, -0.01]} ref={hoverBoxRef} scale={[0, 0, 0]}>
-          <boxGeometry args={[4, 4, 0.5]}/>
+          <boxGeometry args={isMobile ? [2.5, 4, 0.5] : [4, 4, 0.5]}/>
           <meshPhysicalMaterial
             color="#444"
             transparent={true}
@@ -202,15 +203,15 @@ const GridTile = (props: GridTileProps) => {
           />
           <Edges color="white" lineWidth={3}/>
         </mesh>
-        <Text position={[0, -1.8, 0.4]} {...fontProps} ref={titleRef}>
+        <Text position={[0, isMobile ? -1.8 : -1.8, 0.4]} fontSize={isMobile ? 0.25 : 0.7} {...fontProps} ref={titleRef}>
           {title}
         </Text>
       </group>
       <MeshPortalMaterial ref={portalRef} blend={0} resolution={0} blur={0}>
         <color attach="background" args={[color]} />
-        {imageUrl && texture ? (
+        {imageUrl ? (
           <mesh position={[0, 0, 0]}>
-            <planeGeometry args={[3, 6]} />
+            <planeGeometry args={imageSize} />
             <meshBasicMaterial map={texture} />
           </mesh>
         ) : children}

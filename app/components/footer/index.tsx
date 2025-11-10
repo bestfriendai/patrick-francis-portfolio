@@ -73,8 +73,9 @@ const FooterLinkItem = ({ link }: { link: FooterLink }) => {
 
   useCursor(hovered);
 
-  if (isMobile) {
-    return <Svg onClick={onClick} scale={0.0015} position={[0.1, 0.25, 0]} src={link.icon} />;
+  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+  if (isSmallScreen) {
+    return <Svg onClick={onClick} scale={0.0025} position={[0, 0.1, 0]} src={link.icon} />;
   }
 
   return (
@@ -96,9 +97,15 @@ const Footer = () => {
   });
 
   const getLinks = () => {
+    // Calculate responsive spacing based on number of links and actual screen width
+    const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+    const spacing = isSmallScreen ? 0.8 : 2;
+    const totalWidth = (FOOTER_LINKS.length - 1) * spacing;
+    const startPosition = -totalWidth / 2;
+
     return FOOTER_LINKS.map((link, i) => {
       return (
-        <group key={i} position={[i * (isMobile ? 1.1 : 2), 0, 0]}>
+        <group key={i} position={[startPosition + i * spacing, 0, 0]}>
           <FooterLinkItem link={link}/>
         </group>
       );
@@ -107,7 +114,7 @@ const Footer = () => {
 
   return (
     <group position={[0, -44, 18]} rotation={[-Math.PI / 2, 0, 0]} ref={groupRef}>
-      <group position={[isMobile ? -2.5 : -4, 0, 0]}>
+      <group position={[0, 0, 0]}>
         { getLinks() }
       </group>
     </group>
