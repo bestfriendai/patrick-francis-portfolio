@@ -53,10 +53,15 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  if (progress >= 100) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <AnimatePresence>
+      {progress < 100 && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        >
       {/* Animated background gradient */}
       <div className="absolute inset-0 opacity-30 pointer-events-none">
         <motion.div
@@ -268,6 +273,8 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
           }}
         />
       ))}
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

@@ -56,11 +56,12 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
 
   useGSAP(() => {
     if (isReady) {
-      // Fade in only when truly ready
+      // Fade in smoothly as loader fades out
       gsap.to('.base-canvas', {
         opacity: 1,
-        duration: 0.5,
+        duration: 0.8,
         delay: 0,
+        ease: 'power2.inOut',
         pointerEvents: 'auto'
       });
     }
