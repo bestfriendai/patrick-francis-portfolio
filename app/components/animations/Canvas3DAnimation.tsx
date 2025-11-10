@@ -431,7 +431,7 @@ const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
         const waveRadius = (timestamp * 0.04 * GLOBAL_SPEED) % (maxDist * 1.5);
         const waveWidth = 40;
         const displacementMagnitude = 10;
-        const pointsToDraw = [];
+        const pointsToDraw: Array<{ x: number; y: number; z: number; size: number; opacity: number }> = [];
 
         points.forEach((p_orig: any) => {
           let { x, y, z } = p_orig;
@@ -539,7 +539,7 @@ const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
         const maxRadius = ringRadii[ringRadii.length - 1];
 
         if (!animations['phased-array-emitter-points']) {
-          const points = [];
+          const points: Array<{ x: number; y: number; z: number }> = [];
           ringRadii.forEach((radius, i) => {
             for (let j = 0; j < pointsPerRing[i]; j++) {
               const angle = (j / pointsPerRing[i]) * Math.PI * 2;

@@ -10,7 +10,7 @@ import { isMobile } from "react-device-detect";
 import { useThemeStore } from "@stores";
 
 import Preloader from "./Preloader";
-import ProgressLoader from "./ProgressLoader";
+import { EnhancedLoader } from "./EnhancedLoader";
 import { ScrollHint } from "./ScrollHint";
 import ThemeSwitcher from "./ThemeSwitcher";
 // import {Perf} from "r3f-perf"
@@ -106,7 +106,7 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
           </Suspense>
           <AdaptiveDpr pixelated={false}/>
         </Canvas>
-        <ProgressLoader progress={isReady ? 100 : Math.min(progress, 99)} />
+        <EnhancedLoader progress={isReady ? 100 : Math.min(progress, 99)} />
       </div>
       <ThemeSwitcher />
       <ScrollHint />

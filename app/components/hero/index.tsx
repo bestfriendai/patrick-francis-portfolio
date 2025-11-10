@@ -4,7 +4,7 @@ import { Text } from "@react-three/drei";
 
 import { useProgress } from "@react-three/drei";
 import gsap from "gsap";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import CloudContainer from "../models/Cloud";
 import StarsContainer from "../models/Stars";
@@ -20,6 +20,7 @@ const Hero = () => {
   const emailRef = useRef<THREE.Mesh>(null);
   const { progress } = useProgress();
   const [isMobile, setIsMobile] = useState(false);
+  const [showVehicles, setShowVehicles] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -67,6 +68,13 @@ const Hero = () => {
       });
     }
   }, [progress, isMobile]);
+
+  // Load vehicles progressively after hero text
+  useEffect(() => {
+    if (progress > 60) {
+      setShowVehicles(true);
+    }
+  }, [progress]);
 
   const fontProps = {
     font: "./soria-font.ttf",
@@ -140,9 +148,16 @@ const Hero = () => {
       </Text>
       <StarsContainer />
       <CloudContainer/>
-      <Bmw />
-      <Porsche />
-      <Jeep />
+
+      {/* Load vehicles progressively with Suspense */}
+      {showVehicles && (
+        <Suspense fallback={null}>
+          <Bmw />
+          <Porsche />
+          <Jeep />
+        </Suspense>
+      )}
+
       <group position={[0, -25, 5.69]}>
         <pointLight castShadow position={[1, 1, -2.5]} intensity={60} distance={10}/>
         <WindowModel receiveShadow/>

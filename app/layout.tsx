@@ -119,6 +119,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="overscroll-y-none">
       <head>
+        {/* Preload critical assets */}
+        <link rel="preload" href="/soria-font.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
+        <link rel="preload" href="/Vercetti-Regular.woff" as="font" type="font/woff" crossOrigin="anonymous" />
+
+        {/* DNS prefetch for external resources */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+        {/* Preconnect to critical domains */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
