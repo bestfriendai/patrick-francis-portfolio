@@ -183,7 +183,6 @@ const GridTile = (props: GridTileProps) => {
     return <planeGeometry args={[4, 4, 1]} />
   };
 
-  const size = isMobile ? 3 : 4;
   const imageSize: [number, number] = isMobile ? [2.2, 4.5] : [3, 6];
 
   return (

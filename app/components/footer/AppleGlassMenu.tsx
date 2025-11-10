@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { FOOTER_LINKS } from '../../constants';
 
 const AppleGlassMenu = () => {
@@ -28,10 +29,14 @@ const AppleGlassMenu = () => {
               className="glass-item"
               title={link.hoverText}
             >
-              <img
+              <Image
                 src={link.icon}
                 alt={link.name}
+                width={56}
+                height={56}
                 className="glass-icon"
+                quality={90}
+                priority={index < 3}
               />
             </a>
           ))}

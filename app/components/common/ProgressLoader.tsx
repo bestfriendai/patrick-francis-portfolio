@@ -58,20 +58,21 @@ const ProgressLoader = ({ progress }: { progress: number }) => {
 
   if (isMobile) {
     return (
-      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
-        <div className="relative w-[100px] transition-all duration-500 font-sans font-bold"
-          style={{ opacity: progress === 100 ? 0 : 0.7, fontSize: '0.6rem' }}>
-          <div className='absolute w-[100px] bg-black opacity-30 h-[2px]'/>
+      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none z-[60]">
+        <div className="relative w-[200px] transition-all duration-500 font-sans font-bold"
+          style={{ opacity: progress === 100 ? 0 : 1, fontSize: '1rem' }}>
+          <div className='absolute w-[200px] bg-black opacity-40 h-[3px] rounded-full'/>
           <div
-            className="absolute transition-all duration-500 ease-in-out "
+            className="absolute transition-all duration-500 ease-in-out rounded-full"
             style={{
-              height: '2px',
+              height: '3px',
               width: `${progress}%`,
               backgroundColor: 'white',
+              boxShadow: '0 0 10px rgba(255, 255, 255, 0.5)',
             }}
           />
-          <div className='mt-2 text-white'>
-            {`${progress.toFixed(2)}%`}
+          <div className='mt-4 text-white text-center' style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+            Loading {`${Math.floor(progress)}%`}
           </div>
         </div>
       </div>
@@ -80,9 +81,24 @@ const ProgressLoader = ({ progress }: { progress: number }) => {
   return (
     // Use fixed positioning to overlay the loader
     <div
-      className="fixed top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none"
-      style={{ padding: '1rem' }}
+      className="fixed top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none z-[60]"
+      style={{
+        padding: '1rem',
+        opacity: progress === 100 ? 0 : 1,
+        transition: 'opacity 0.5s ease-out'
+      }}
     >
+      {/* Center percentage text */}
+      <div
+        className="absolute text-white text-2xl font-bold"
+        style={{
+          textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+          transition: 'opacity 0.3s ease-in-out'
+        }}
+      >
+        Loading {Math.floor(progress)}%
+      </div>
+
       <svg
         width={svgWidth} // Use calculated SVG width
         height={svgHeight} // Use calculated SVG height
@@ -97,7 +113,7 @@ const ProgressLoader = ({ progress }: { progress: number }) => {
           height={rectHeight} // Use calculated rectangle height
           fill="none"
           strokeWidth={strokeWidth}
-          stroke="rgba(0, 0, 0, 0.2)"
+          stroke="rgba(0, 0, 0, 0.3)"
           // className={bgColor} // Apply ba ckground color class
         />
         {/* Progress indicator rectangle */}
@@ -108,11 +124,12 @@ const ProgressLoader = ({ progress }: { progress: number }) => {
           height={rectHeight} // Use calculated rectangle height
           fill="none"
           strokeWidth={strokeWidth}
-          stroke="rgba(255, 255, 255, 0.7)"
+          stroke="rgba(255, 255, 255, 0.8)"
           style={{
             strokeDasharray: perimeter, // Set the total length of dashes (perimeter)
             strokeDashoffset: strokeDashoffset, // Set the offset to show progress
-            transition: 'stroke-dashoffset 1s ease-in-out', // Smooth transition effect
+            transition: 'stroke-dashoffset 0.5s ease-in-out', // Smooth transition effect
+            filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.4))',
           }}
         />
       </svg>

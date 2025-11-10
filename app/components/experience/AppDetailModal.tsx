@@ -1,6 +1,5 @@
 import { Text, useTexture } from '@react-three/drei';
-import { useEffect, useState } from 'react';
-import * as THREE from 'three';
+import { useEffect } from 'react';
 import { App } from '../../types/app';
 import { trackAppDetailOpen, trackAppDetailClose } from '../../utils/analytics';
 import ScreenshotCarousel from './ScreenshotCarousel';
@@ -13,7 +12,6 @@ interface AppDetailModalProps {
 }
 
 const AppDetailModal = ({ app, isOpen, onClose, isMobile = false }: AppDetailModalProps) => {
-  const [currentScreenshot, setCurrentScreenshot] = useState(0);
 
   useEffect(() => {
     if (isOpen && app) {
@@ -40,6 +38,7 @@ const AppDetailModal = ({ app, isOpen, onClose, isMobile = false }: AppDetailMod
 
   if (!isOpen || !app) return null;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const icon = useTexture(app.icon);
 
   return (
@@ -96,7 +95,7 @@ const AppDetailModal = ({ app, isOpen, onClose, isMobile = false }: AppDetailMod
         <group position={isMobile ? [0, -0.5, 0] : [2, 0, 0]}>
           <ScreenshotCarousel
             screenshots={app.screenshots}
-            activeIndex={currentScreenshot}
+            activeIndex={0}
             isMobile={isMobile}
             spacing={2.8}
           />

@@ -13,7 +13,6 @@ interface DesktopAppCardProps {
 const DesktopAppCard = ({ app, position, onExpand }: DesktopAppCardProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
   const texture = useTexture(app.screenshots[0]);
 
   useEffect(() => {
@@ -61,7 +60,6 @@ const DesktopAppCard = ({ app, position, onExpand }: DesktopAppCardProps) => {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         onClick={() => {
-          setClicked(true);
           if (onExpand) onExpand();
           if (app.links.website) {
             window.open(app.links.website, '_blank');
