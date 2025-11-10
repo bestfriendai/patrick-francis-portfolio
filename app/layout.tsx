@@ -14,12 +14,15 @@ const vercettiFont = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Patrick Francis ✌️",
-  description: "A frontend developer by profession, a creative at heart.",
-  keywords: "Patrick Francis, DontFollowPat, Frontend Engineer, React Developer, Three.js, Creative Developer, Web Development, Angular, JavaScript, TypeScript, Portfolio",
-  authors: [{ name: "Patrick Francis" }],
-  creator: "Patrick Francis",
+  title: "Patrick Francis | DontFollowPat | TrapPat - Entrepreneur, App Developer & Author",
+  description: "Patrick Francis (DontFollowPat, TrapPat) - Entrepreneur, App Developer, and Author. Creator of PATS APPS including PrayAI and FakeFlex. Contact: Contact@DontFollowPat.com",
+  keywords: "Patrick Francis, DontFollowPat, TrapPat, Trap Pat, Don't Follow Pat, Entrepreneur, App Developer, Author, PrayAI, FakeFlex, PATS APPS, Frontend Engineer, React Developer, Three.js, Mobile Apps, iOS Developer, Android Developer, Creative Developer, Web Development, JavaScript, TypeScript, Portfolio, Software Engineer, Tech Entrepreneur",
+  authors: [{ name: "Patrick Francis" }, { name: "DontFollowPat" }, { name: "TrapPat" }],
+  creator: "Patrick Francis (DontFollowPat)",
   publisher: "Patrick Francis",
+  alternates: {
+    canonical: "https://dontfollowpat.com",
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -33,23 +36,40 @@ export const metadata: Metadata = {
       follow: true,
       'max-image-preview': 'large',
       'max-snippet': -1,
+      'max-video-preview': -1,
     },
   },
   openGraph: {
-    title: "Patrick Francis - Frontend Engineer",
-    description: "Frontend engineer by profession, creative at heart.",
+    title: "Patrick Francis | DontFollowPat | TrapPat - Entrepreneur & App Developer",
+    description: "Entrepreneur, App Developer, and Author. Creator of PrayAI and FakeFlex. Building the future of mobile apps.",
     url: "https://dontfollowpat.com",
-    siteName: "Patrick Francis's Portfolio",
+    siteName: "Patrick Francis (DontFollowPat)",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "https://dontfollowpat.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Patrick Francis - DontFollowPat - Entrepreneur and App Developer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Patrick Francis - Frontend Engineer",
-    description: "Frontend engineer by profession, creative at heart.",
+    title: "Patrick Francis | DontFollowPat | TrapPat",
+    description: "Entrepreneur, App Developer, and Author. Creator of PrayAI and FakeFlex.",
+    site: "@DontFollowPat",
+    creator: "@DontFollowPat",
+    images: ["https://dontfollowpat.com/og-image.png"],
   },
   verification: {
     google: "GsRYY-ivL0F_VKkfs5KAeToliqz0gCrRAJKKmFkAxBA",
+  },
+  other: {
+    "contact:email": "Contact@DontFollowPat.com",
+    "brand": "DontFollowPat, TrapPat, Patrick Francis",
+    "category": "Technology, Entrepreneurship, Software Development",
   },
 };
 
@@ -65,8 +85,45 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Patrick Francis",
+    "alternateName": ["DontFollowPat", "TrapPat", "Trap Pat"],
+    "jobTitle": "Entrepreneur, App Developer, and Author",
+    "description": "Entrepreneur, App Developer, and Author. Creator of PATS APPS including PrayAI and FakeFlex.",
+    "url": "https://dontfollowpat.com",
+    "email": "Contact@DontFollowPat.com",
+    "image": "https://dontfollowpat.com/og-image.png",
+    "sameAs": [
+      "https://dontfollowpat.com",
+      "https://twitter.com/DontFollowPat"
+    ],
+    "knowsAbout": [
+      "Software Development",
+      "Mobile App Development",
+      "Web Development",
+      "Entrepreneurship",
+      "React",
+      "Three.js",
+      "JavaScript",
+      "TypeScript"
+    ],
+    "brand": {
+      "@type": "Brand",
+      "name": "DontFollowPat",
+      "alternateName": "TrapPat"
+    }
+  };
+
   return (
     <html lang="en" className="overscroll-y-none">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${soriaFont.variable} ${vercettiFont.variable} font-sans antialiased`}
       >

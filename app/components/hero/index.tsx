@@ -17,6 +17,7 @@ import TextWindow from "./TextWindow";
 const Hero = () => {
   const titleRef = useRef<THREE.Mesh>(null);
   const subtitleRef = useRef<THREE.Mesh>(null);
+  const emailRef = useRef<THREE.Mesh>(null);
   const { progress } = useProgress();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -54,6 +55,19 @@ const Hero = () => {
     }
   }, [progress, isMobile]);
 
+  useEffect(() => {
+    if (progress === 100 && emailRef.current) {
+      gsap.fromTo(emailRef.current.position, {
+        y: -10,
+        duration: 1,
+      }, {
+        y: isMobile ? -2.2 : -1.2,
+        duration: 3,
+        delay: 0.4
+      });
+    }
+  }, [progress, isMobile]);
+
   const fontProps = {
     font: "./soria-font.ttf",
     fontSize: isMobile ? 1.2 : 1.6,
@@ -68,8 +82,16 @@ const Hero = () => {
     textAlign: 'center' as const,
   };
 
+  const emailFontProps = {
+    font: "./soria-font.ttf",
+    fontSize: isMobile ? 0.45 : 0.55,
+    color: "#ffffff",
+    textAlign: 'center' as const,
+  };
+
   const titlePosition: [number, number, number] = [0, isMobile ? 1 : 2, -10];
   const subtitlePosition: [number, number, number] = [0, isMobile ? -1 : 0, -10];
+  const emailPosition: [number, number, number] = [0, isMobile ? -2.2 : -1.2, -10];
 
   return (
     <>
@@ -92,6 +114,29 @@ const Hero = () => {
         anchorY="middle"
       >
         Entrepreneur, App Developer, Author,{'\n'}and cool as F*CK
+      </Text>
+      <Text
+        position={emailPosition}
+        {...emailFontProps}
+        ref={emailRef}
+        maxWidth={isMobile ? 8 : 20}
+        anchorX="center"
+        anchorY="middle"
+        onClick={() => window.open('mailto:Contact@DontFollowPat.com', '_blank')}
+        onPointerOver={(e) => {
+          if (e.object) {
+            (e.object as any).material.color.set('#ffffff');
+            document.body.style.cursor = 'pointer';
+          }
+        }}
+        onPointerOut={(e) => {
+          if (e.object) {
+            (e.object as any).material.color.set('#64c8ff');
+            document.body.style.cursor = 'auto';
+          }
+        }}
+      >
+        Email: Contact@DontFollowPat.com
       </Text>
       <StarsContainer />
       <CloudContainer/>
