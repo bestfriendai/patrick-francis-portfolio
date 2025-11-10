@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Canvas3DAnimation from '../animations/Canvas3DAnimation';
 
 interface LoadingStage {
   threshold: number;
@@ -73,43 +74,19 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
 
       {/* Main loader content */}
       <div className="relative z-10 flex flex-col items-center gap-8 px-4">
-        {/* 3D Rotating Cube Animation */}
-        <div className="relative w-24 h-24 md:w-32 md:h-32 perspective-1000">
-          <motion.div
-            className="w-full h-full"
-            style={{
-              transformStyle: 'preserve-3d',
-            }}
-            animate={{
-              rotateX: [0, 360],
-              rotateY: [0, 360],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            {/* Cube faces */}
-            {[
-              { transform: 'translateZ(48px)', bg: 'from-blue-500 to-blue-600' },
-              { transform: 'rotateY(90deg) translateZ(48px)', bg: 'from-cyan-500 to-blue-500' },
-              { transform: 'rotateY(180deg) translateZ(48px)', bg: 'from-blue-600 to-cyan-600' },
-              { transform: 'rotateY(-90deg) translateZ(48px)', bg: 'from-cyan-600 to-blue-400' },
-              { transform: 'rotateX(90deg) translateZ(48px)', bg: 'from-blue-400 to-cyan-500' },
-              { transform: 'rotateX(-90deg) translateZ(48px)', bg: 'from-cyan-400 to-blue-500' },
-            ].map((face, i) => (
-              <div
-                key={i}
-                className={`absolute w-full h-full bg-gradient-to-br ${face.bg} opacity-80 border border-blue-300/30`}
-                style={{
-                  transform: face.transform,
-                  backfaceVisibility: 'visible',
-                }}
-              />
-            ))}
-          </motion.div>
-        </div>
+        {/* 3D Canvas Animation from /dist folder */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Canvas3DAnimation
+            animationType="sphere-scan"
+            width={180}
+            height={180}
+            className="drop-shadow-2xl"
+          />
+        </motion.div>
 
         {/* Logo animation */}
         <motion.div
