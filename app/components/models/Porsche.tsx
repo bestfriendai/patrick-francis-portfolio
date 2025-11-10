@@ -64,11 +64,6 @@ export function Porsche() {
 
       groupRef.current.position.set(xPos, yPos, zPos);
 
-      // Debug logging (remove after testing)
-      if (Math.random() < 0.01) {
-        console.log('Porsche position:', { x: xPos.toFixed(2), y: yPos.toFixed(2), z: zPos.toFixed(2), visible: groupRef.current.visible });
-      }
-
       // Porsche: Elegant spinning motion - mostly Y axis with gentle wobble
       carRef.current.rotation.y += delta * (1.2 + scrollOffset * 3.0); // Fast Y spin
       carRef.current.rotation.z += delta * (0.2 + Math.sin(state.clock.elapsedTime) * 0.1); // Gentle wobble

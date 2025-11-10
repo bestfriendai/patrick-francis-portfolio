@@ -64,11 +64,6 @@ export function Jeep() {
 
       groupRef.current.position.set(xPos, yPos, zPos);
 
-      // Debug logging (remove after testing)
-      if (Math.random() < 0.01) {
-        console.log('Jeep position:', { x: xPos.toFixed(2), y: yPos.toFixed(2), z: zPos.toFixed(2), visible: groupRef.current.visible });
-      }
-
       // Jeep: Chaotic tumbling - all axes rotating heavily
       carRef.current.rotation.x += delta * (0.9 + scrollOffset * 1.8); // Strong X flip
       carRef.current.rotation.y += delta * (0.7 + scrollOffset * 2.2); // Strong Y spin
