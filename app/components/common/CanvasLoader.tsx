@@ -20,6 +20,7 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const backgroundColor = useThemeStore((state) => state.theme.color);
   const { progress } = useProgress();
+  const [isReady, setIsReady] = useState(false);
   const [canvasStyle, setCanvasStyle] = useState<React.CSSProperties>({
     position: "absolute",
     top: 0,
@@ -28,6 +29,7 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
     right: 0,
     opacity: 0,
     overflow: "hidden",
+    pointerEvents: "auto",
   });
 
   useEffect(() => {
@@ -41,11 +43,28 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
     }
   }, [isMobile]);
 
-  useGSAP(() => {
-    if (progress === 100) {
-      gsap.to('.base-canvas', { opacity: 1, duration: 3, delay: 1 });
+  // Wait for assets to load AND render before showing
+  useEffect(() => {
+    if (progress === 100 && !isReady) {
+      // Add extra time on mobile to ensure everything renders
+      const readyDelay = isMobile ? 2000 : 1000;
+      setTimeout(() => {
+        setIsReady(true);
+      }, readyDelay);
     }
-  }, [progress]);
+  }, [progress, isReady]);
+
+  useGSAP(() => {
+    if (isReady) {
+      // Fade in only when truly ready
+      gsap.to('.base-canvas', {
+        opacity: 1,
+        duration: 0.5,
+        delay: 0,
+        pointerEvents: 'auto'
+      });
+    }
+  }, [isReady]);
 
   useGSAP(() => {
     gsap.to(ref.current, {
@@ -73,7 +92,7 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
           shadows
           style={canvasStyle}
           ref={canvasRef}
-          dpr={[1, 2]}>
+          dpr={isMobile ? [2, 2] : [1, 2]}>
           {/* <Perf/> */}
           <Suspense fallback={null}>
             <ambientLight intensity={0.5} />
@@ -85,9 +104,9 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
 
             <Preload all />
           </Suspense>
-          <AdaptiveDpr pixelated/>
+          <AdaptiveDpr pixelated={false}/>
         </Canvas>
-        <ProgressLoader progress={progress} />
+        <ProgressLoader progress={isReady ? 100 : Math.min(progress, 99)} />
       </div>
       <ThemeSwitcher />
       <ScrollHint />

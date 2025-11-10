@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import CanvasLoader from "./components/common/CanvasLoader";
 import ScrollWrapper from "./components/common/ScrollWrapper";
 import AppleGlassMenu from "./components/footer/AppleGlassMenu";
+import AppsGrid from "./components/apps/AppsGrid";
 
 // Dynamic imports for heavy components to improve initial load performance
 const Hero = dynamic(() => import("./components/hero"), { ssr: false });
@@ -20,6 +21,7 @@ const Home = () => {
           <Footer/>
         </ScrollWrapper>
       </CanvasLoader>
+      <AppsGrid />
       <AppleGlassMenu />
     </>
   );

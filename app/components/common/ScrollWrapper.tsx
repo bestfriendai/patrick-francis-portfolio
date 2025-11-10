@@ -24,7 +24,15 @@ const ScrollWrapper = (props: { children: React.ReactNode | React.ReactNode[]}) 
         camera.position.y = THREE.MathUtils.damp(camera.position.y, -37 * b, 7, delta);
         camera.position.z = THREE.MathUtils.damp(camera.position.z, 5 + 10 * d, 7, delta);
 
-        setScrollProgress(data.range(0, 1));
+        const scrollPosition = data.range(0, 1);
+        setScrollProgress(scrollPosition);
+
+        // Dispatch custom event with scroll position for AppsGrid
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('scene-scroll-update', {
+            detail: { scrollPosition }
+          }));
+        }
       }
 
       // Move camera slightly on mouse movement.

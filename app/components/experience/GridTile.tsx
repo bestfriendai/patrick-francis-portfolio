@@ -23,14 +23,19 @@ const GridTile = (props: GridTileProps) => {
   const gridRef = useRef<THREE.Group>(null);
   const hoverBoxRef = useRef<THREE.Mesh>(null);
   const portalRef = useRef(null);
-  const { title, textAlign, children, color, position, id, imageUrl, link } = props;
+  const { title, textAlign, color, position, id, imageUrl, link } = props;
   const { camera } = useThree();
   const setActivePortal = usePortalStore((state) => state.setActivePortal);
   const isActive = usePortalStore((state) => state.activePortalId === id);
   const activePortalId = usePortalStore((state) => state.activePortalId);
   const data = useScroll();
-  // Always call useTexture hook, even if imageUrl is undefined
-  const texture = useTexture(imageUrl || '/placeholder.png');
+  // Create a dummy 1x1 transparent texture for tiles without images
+  const dummyCanvas = typeof document !== 'undefined' ? document.createElement('canvas') : null;
+  if (dummyCanvas) {
+    dummyCanvas.width = 1;
+    dummyCanvas.height = 1;
+  }
+  const texture = useTexture(imageUrl || (dummyCanvas ? dummyCanvas.toDataURL() : ''));
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -72,6 +77,11 @@ const GridTile = (props: GridTileProps) => {
     if (link) {
       e.stopPropagation();
       window.open(link, '_blank');
+      return;
+    }
+
+    // Don't allow portal if no link (coming soon tiles)
+    if (!link) {
       return;
     }
 
@@ -152,11 +162,14 @@ const GridTile = (props: GridTileProps) => {
 
   const onPointerOver = () => {
     if (isActive || isMobile) return;
-    document.body.style.cursor = 'pointer';
+    // Only show pointer if there's a link
+    if (link) {
+      document.body.style.cursor = 'pointer';
+    }
     gsap.to(titleRef.current, {
       fillOpacity: 1
     });
-    if (gridRef.current && hoverBoxRef.current) {
+    if (gridRef.current && hoverBoxRef.current && link) {
       gsap.to(gridRef.current.position, { z: 0.5, duration: 0.4});
       gsap.to(hoverBoxRef.current.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
     }
@@ -175,15 +188,12 @@ const GridTile = (props: GridTileProps) => {
   };
 
   const getGeometry = () => {
-    // Mobile: Portrait rectangle (taller than wide)
-    // Desktop: Square tiles
-    if (isMobile) {
-      return <planeGeometry args={[2.5, 4, 1]} />
-    }
-    return <planeGeometry args={[4, 4, 1]} />
+    // Square tiles - much smaller on mobile for 2x2 grid that fits screen
+    const size = isMobile ? 1.5 : 4;
+    return <planeGeometry args={[size, size, 1]} />
   };
 
-  const imageSize: [number, number] = isMobile ? [2.2, 4.5] : [3, 6];
+  const imageSize: [number, number] = isMobile ? [1.3, 2.6] : [3, 6];
 
   return (
     <mesh ref={gridRef}
@@ -194,7 +204,7 @@ const GridTile = (props: GridTileProps) => {
       { getGeometry() }
       <group>
         <mesh position={[0, 0, -0.01]} ref={hoverBoxRef} scale={[0, 0, 0]}>
-          <boxGeometry args={isMobile ? [2.5, 4, 0.5] : [4, 4, 0.5]}/>
+          <boxGeometry args={isMobile ? [1.5, 1.5, 0.5] : [4, 4, 0.5]}/>
           <meshPhysicalMaterial
             color="#444"
             transparent={true}
@@ -202,7 +212,7 @@ const GridTile = (props: GridTileProps) => {
           />
           <Edges color="white" lineWidth={3}/>
         </mesh>
-        <Text position={[0, isMobile ? -1.8 : -1.8, 0.4]} fontSize={isMobile ? 0.25 : 0.7} {...fontProps} ref={titleRef}>
+        <Text position={[0, isMobile ? -0.65 : -1.8, 0.4]} fontSize={isMobile ? 0.12 : 0.7} {...fontProps} ref={titleRef}>
           {title}
         </Text>
       </group>
@@ -213,7 +223,19 @@ const GridTile = (props: GridTileProps) => {
             <planeGeometry args={imageSize} />
             <meshBasicMaterial map={texture} />
           </mesh>
-        ) : children}
+        ) : (
+          // Show "COMING SOON" text centered for tiles without images
+          <Text
+            position={[0, 0, 0]}
+            fontSize={isMobile ? 0.15 : 0.5}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+            font="./soria-font.ttf"
+          >
+            {title}
+          </Text>
+        )}
       </MeshPortalMaterial>
     </mesh>
   );
