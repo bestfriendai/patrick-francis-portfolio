@@ -2,10 +2,10 @@
 
 import { useGLTF, useScroll } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import * as THREE from 'three';
 
-export function Porsche() {
+export const Porsche = memo(function Porsche() {
   const gltf = useGLTF('/models/porsche.glb');
   const groupRef = useRef<THREE.Group>(null);
   const carRef = useRef<THREE.Group>(null);
@@ -114,6 +114,6 @@ export function Porsche() {
       </group>
     </group>
   );
-}
+});
 
 useGLTF.preload('/models/porsche.glb');
