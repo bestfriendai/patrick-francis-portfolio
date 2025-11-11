@@ -19,14 +19,14 @@ interface AnimationConfig {
 }
 
 const animations: AnimationConfig[] = [
-  // Scroll 15-25% - Introduction Transition
+  // Scroll 15-30% - Introduction Transition (Extended duration)
   {
     type: 'helix-scanner',
     scrollStart: 0.15,
-    scrollEnd: 0.25,
+    scrollEnd: 0.30,
     position: {
       desktop: { left: '5%', top: '20%' },
-      mobile: { left: '5%', top: '15%' }
+      mobile: { left: '8%', top: '20%' } // Moved in slightly, lowered
     },
     size: {
       desktop: { width: 240, height: 240 },
@@ -37,10 +37,10 @@ const animations: AnimationConfig[] = [
   {
     type: 'crystalline-refraction',
     scrollStart: 0.15,
-    scrollEnd: 0.25,
+    scrollEnd: 0.30,
     position: {
       desktop: { right: '5%', top: '20%' },
-      mobile: { right: '5%', top: '15%' }
+      mobile: { right: '8%', top: '20%' } // Moved in slightly, lowered
     },
     size: {
       desktop: { width: 240, height: 240 },
@@ -49,14 +49,14 @@ const animations: AnimationConfig[] = [
     zIndex: 10
   },
 
-  // Scroll 30-45% - Build Momentum
+  // Scroll 30-50% - Build Momentum (Extended duration)
   {
     type: 'sphere-scan',
     scrollStart: 0.30,
-    scrollEnd: 0.45,
+    scrollEnd: 0.50,
     position: {
       desktop: { left: '15%', top: '35%' },
-      mobile: { left: '10%', top: '30%' }
+      mobile: { left: '12%', top: '35%' } // Centered better
     },
     size: {
       desktop: { width: 400, height: 400 },
@@ -67,10 +67,10 @@ const animations: AnimationConfig[] = [
   {
     type: 'phased-array-emitter',
     scrollStart: 0.30,
-    scrollEnd: 0.45,
+    scrollEnd: 0.50,
     position: {
       desktop: { right: '10%', top: '25%' },
-      mobile: { right: '5%', top: '20%' }
+      mobile: { right: '12%', top: '28%' } // Better positioning
     },
     size: {
       desktop: { width: 300, height: 300 },
@@ -79,14 +79,14 @@ const animations: AnimationConfig[] = [
     zIndex: 15
   },
 
-  // Scroll 50-65% - Peak Interest Zone (HERO)
+  // Scroll 48-68% - Peak Interest Zone (Longer display, earlier start)
   {
     type: 'voxel-matrix-morph',
-    scrollStart: 0.50,
-    scrollEnd: 0.65,
+    scrollStart: 0.48,
+    scrollEnd: 0.68,
     position: {
       desktop: { left: '50%', top: '40%', transform: 'translate(-50%, -50%)' },
-      mobile: { left: '50%', top: '35%', transform: 'translate(-50%, -50%)' }
+      mobile: { left: '50%', top: '40%', transform: 'translate(-50%, -50%)' } // More centered
     },
     size: {
       desktop: { width: 600, height: 600 },
@@ -96,11 +96,11 @@ const animations: AnimationConfig[] = [
   },
   {
     type: 'sonar-sweep',
-    scrollStart: 0.50,
-    scrollEnd: 0.65,
+    scrollStart: 0.48,
+    scrollEnd: 0.68,
     position: {
       desktop: { left: '10%', bottom: '25%' },
-      mobile: { left: '5%', bottom: '20%' }
+      mobile: { left: '10%', bottom: '28%' } // Moved up slightly
     },
     size: {
       desktop: { width: 360, height: 360 },
@@ -109,14 +109,14 @@ const animations: AnimationConfig[] = [
     zIndex: 18
   },
 
-  // Scroll 70-75% - Transition to Apps
+  // Scroll 68-85% - Transition to Apps (Extended to bridge gap)
   {
     type: 'crystalline-cube-refraction',
-    scrollStart: 0.70,
-    scrollEnd: 0.80,
+    scrollStart: 0.68,
+    scrollEnd: 0.85,
     position: {
       desktop: { right: '8%', top: '30%' },
-      mobile: { right: '5%', top: '25%' }
+      mobile: { right: '10%', top: '32%' } // Better visibility
     },
     size: {
       desktop: { width: 400, height: 400 },
@@ -126,11 +126,11 @@ const animations: AnimationConfig[] = [
   },
   {
     type: 'cylindrical-analysis',
-    scrollStart: 0.70,
-    scrollEnd: 0.80,
+    scrollStart: 0.68,
+    scrollEnd: 0.85,
     position: {
       desktop: { left: '8%', top: '35%' },
-      mobile: { left: '5%', top: '30%' }
+      mobile: { left: '10%', top: '35%' } // More visible
     },
     size: {
       desktop: { width: 280, height: 280 },
@@ -139,14 +139,14 @@ const animations: AnimationConfig[] = [
     zIndex: 16
   },
 
-  // Scroll 75%+ - PATS APPS Section Background
+  // Scroll 75%+ - PATS APPS Section Background (Continuous)
   {
     type: 'interconnecting-waves',
     scrollStart: 0.75,
     scrollEnd: 1.0,
     position: {
       desktop: { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' },
-      mobile: { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }
+      mobile: { left: '50%', top: '48%', transform: 'translate(-50%, -50%)' } // Slightly higher
     },
     size: {
       desktop: { width: 800, height: 800 },

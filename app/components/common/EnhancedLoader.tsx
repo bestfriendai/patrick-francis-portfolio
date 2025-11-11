@@ -87,9 +87,9 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
     }
   }, [currentStage]);
 
-  // Initialize Matrix columns
+  // Initialize Matrix columns - fewer on mobile for better performance
   useEffect(() => {
-    const columns = Array.from({ length: isMobile ? 15 : 25 }, () => Math.random() * 100);
+    const columns = Array.from({ length: isMobile ? 8 : 25 }, () => Math.random() * 100);
     setMatrixColumns(columns);
   }, []);
 
@@ -113,8 +113,8 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-      {/* Matrix Rain Effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+      {/* Matrix Rain Effect - Optimized for mobile */}
+      <div className={`absolute inset-0 overflow-hidden pointer-events-none ${isMobile ? 'opacity-10' : 'opacity-20'}`}>
         {matrixColumns.map((offset, i) => (
           <motion.div
             key={i}
@@ -128,13 +128,13 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
               y: ['0vh', '120vh'],
             }}
             transition={{
-              duration: 8 + Math.random() * 4,
+              duration: isMobile ? 10 : 8 + Math.random() * 4,
               repeat: Infinity,
               delay: offset / 20,
               ease: 'linear',
             }}
           >
-            {Array.from({ length: 20 }, () =>
+            {Array.from({ length: isMobile ? 12 : 20 }, () =>
               String.fromCharCode(33 + Math.random() * 94)
             ).join('\n')}
           </motion.div>
@@ -340,8 +340,8 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
         </div>
       </div>
 
-      {/* Corner sparkles */}
-      {[
+      {/* Corner sparkles - Reduced on mobile */}
+      {!isMobile && [
         { top: '10%', left: '10%' },
         { top: '15%', right: '15%' },
         { bottom: '20%', left: '15%' },
