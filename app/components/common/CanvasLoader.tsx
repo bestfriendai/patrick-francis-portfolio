@@ -54,14 +54,14 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
       }, transitionDelay);
     }
 
-    // Fallback: Force transition if stuck at 96%+ for too long
-    if (progress >= 96 && !isReady) {
+    // Fallback: Force transition if stuck near end
+    if (progress >= 95 && !isReady) {
       const fallbackTimeout = setTimeout(() => {
         if (!isReady) {
-          console.log('Fallback: Force loading completion at', progress);
+          console.log('Fallback: Force loading completion at', progress + '%');
           setIsReady(true);
         }
-      }, 1500); // Wait 1.5 seconds before forcing - quick but not jarring
+      }, 2000); // Wait 2 seconds at 95%+ before forcing
 
       return () => clearTimeout(fallbackTimeout);
     }

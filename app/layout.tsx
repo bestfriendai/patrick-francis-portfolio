@@ -147,32 +147,6 @@ export default function RootLayout({
       <body
         className={`${soriaFont.variable} ${vercettiFont.variable} font-sans antialiased`}
       >
-        {/* Instant loading fallback - shows immediately before JS loads */}
-        <noscript>
-          <div className="loader-fallback">
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>PATRICK FRANCIS</div>
-              <div>Loading portfolio...</div>
-            </div>
-          </div>
-        </noscript>
-        <div id="initial-loader" className="loader-fallback" style={{ display: 'flex' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '2rem', marginBottom: '1rem', color: '#00d9ff' }}>PATRICK FRANCIS</div>
-            <div style={{ color: '#00d9ff', fontFamily: 'monospace' }}>Loading portfolio...</div>
-          </div>
-        </div>
-        <script dangerouslySetInnerHTML={{ __html: `
-          // Hide fallback loader once React takes over
-          if (typeof window !== 'undefined') {
-            window.addEventListener('load', function() {
-              setTimeout(function() {
-                var loader = document.getElementById('initial-loader');
-                if (loader) loader.style.display = 'none';
-              }, 100);
-            });
-          }
-        ` }} />
         {children}
       </body>
       <GoogleAnalytics gaId={'G-7WD4HM3XRE'}/>

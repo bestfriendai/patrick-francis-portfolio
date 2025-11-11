@@ -76,10 +76,10 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
 
   // Detect if loading is stuck at high percentage
   useEffect(() => {
-    if (progress >= 96 && progress < 100) {
+    if (progress >= 95 && progress < 100) {
       const stuckTimer = setTimeout(() => {
         setIsStuck(true);
-      }, 800); // Mark as stuck after 0.8 seconds - quick feedback
+      }, 1000); // Mark as stuck after 1 second at 95%+
       return () => clearTimeout(stuckTimer);
     } else {
       setIsStuck(false);
