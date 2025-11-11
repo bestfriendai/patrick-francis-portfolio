@@ -39,6 +39,7 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
   const [tipIndex, setTipIndex] = useState(0);
   const [matrixColumns, setMatrixColumns] = useState<number[]>([]);
   const [terminalLines, setTerminalLines] = useState<string[]>([]);
+  const [isStuck, setIsStuck] = useState(false);
 
   useEffect(() => {
     // Update stage based on progress
@@ -72,6 +73,18 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  // Detect if loading is stuck at high percentage
+  useEffect(() => {
+    if (progress >= 96 && progress < 100) {
+      const stuckTimer = setTimeout(() => {
+        setIsStuck(true);
+      }, 2000); // Mark as stuck after 2 seconds
+      return () => clearTimeout(stuckTimer);
+    } else {
+      setIsStuck(false);
+    }
+  }, [progress]);
 
   return (
     <AnimatePresence mode="wait">
@@ -272,11 +285,13 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
 
             {/* Progress Text and Percentage */}
             <div className="flex justify-between items-center mt-2 text-cyan-400 font-mono text-xs md:text-sm">
-              <span className="truncate mr-2">{currentStage.icon} {currentStage.message}</span>
+              <span className="truncate mr-2">
+                {currentStage.icon} {isStuck ? 'Finalizing...' : currentStage.message}
+              </span>
               <motion.span
                 className="text-base md:text-lg font-bold flex-shrink-0"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 0.5, repeat: Infinity }}
+                animate={isStuck ? { opacity: [1, 0.5, 1] } : { scale: [1, 1.1, 1] }}
+                transition={{ duration: isStuck ? 1 : 0.5, repeat: Infinity }}
                 style={{ textShadow: '0 0 10px rgba(0, 255, 255, 0.5)' }}
               >
                 {Math.floor(progress)}%

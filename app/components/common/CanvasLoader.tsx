@@ -53,6 +53,18 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
         setIsReady(true);
       }, transitionDelay);
     }
+
+    // Fallback: Force transition if stuck at 96%+ for too long
+    if (progress >= 96 && !isReady) {
+      const fallbackTimeout = setTimeout(() => {
+        if (!isReady) {
+          console.log('Fallback: Force loading completion at', progress);
+          setIsReady(true);
+        }
+      }, 3000); // Wait 3 seconds before forcing
+
+      return () => clearTimeout(fallbackTimeout);
+    }
   }, [progress, isReady]);
 
   useGSAP(() => {
