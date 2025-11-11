@@ -102,7 +102,7 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
   }, []);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {progress < 100 && (
         <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center"
@@ -111,7 +111,7 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
           }}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
       {/* Matrix Rain Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">

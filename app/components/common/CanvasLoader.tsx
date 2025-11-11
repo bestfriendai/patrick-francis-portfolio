@@ -45,23 +45,24 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
 
   // Wait for assets to load AND render before showing
   useEffect(() => {
-    if (progress >= 95 && !isReady) {
-      // Shorter delay - show content faster
-      const readyDelay = isMobile ? 500 : 300;
+    if (progress === 100 && !isReady) {
+      // Only transition when 100% loaded, with small delay for smooth transition
+      const transitionDelay = 300;
+
       setTimeout(() => {
         setIsReady(true);
-      }, readyDelay);
+      }, transitionDelay);
     }
   }, [progress, isReady]);
 
   useGSAP(() => {
     if (isReady) {
-      // Fade in smoothly as loader fades out
+      // Fade in smoothly as loader fades out - faster transition
       gsap.to('.base-canvas', {
         opacity: 1,
-        duration: 0.8,
+        duration: 0.5,
         delay: 0,
-        ease: 'power2.inOut',
+        ease: 'power2.out',
         pointerEvents: 'auto'
       });
     }
@@ -93,7 +94,18 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
           shadows
           style={canvasStyle}
           ref={canvasRef}
-          dpr={isMobile ? [2, 2] : [1, 2]}>
+          dpr={isMobile ? [1.5, 2] : [1, 2]}
+          gl={{
+            antialias: true,
+            alpha: true,
+            powerPreference: isMobile ? "high-performance" : "high-performance",
+          }}
+          camera={{
+            fov: 50,
+            near: 0.1,
+            far: 1000,
+          }}
+        >
           {/* <Perf/> */}
           <Suspense fallback={null}>
             <ambientLight intensity={0.5} />

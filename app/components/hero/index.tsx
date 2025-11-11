@@ -39,7 +39,7 @@ const Hero = () => {
         y: -10,
         duration: 1,
       }, {
-        y: isMobile ? 1 : 2,
+        y: isMobile ? 0.5 : 1.5,
         duration: 3
       });
     }
@@ -51,7 +51,7 @@ const Hero = () => {
         y: -10,
         duration: 1,
       }, {
-        y: isMobile ? -1 : 0,
+        y: isMobile ? -0.8 : -0.2,
         duration: 3,
         delay: 0.2
       });
@@ -64,7 +64,7 @@ const Hero = () => {
         y: -10,
         duration: 1,
       }, {
-        y: isMobile ? -2.2 : -1.2,
+        y: isMobile ? -1.6 : -0.9,
         duration: 3,
         delay: 0.4
       });
@@ -80,28 +80,28 @@ const Hero = () => {
 
   const fontProps = {
     font: "./soria-font.ttf",
-    fontSize: isMobile ? 1.2 : 1.6,
+    fontSize: isMobile ? 0.9 : 1.4,
     color: "#ffffff",
     textAlign: 'center' as const,
   };
 
   const subtitleFontProps = {
     font: "./soria-font.ttf",
-    fontSize: isMobile ? 0.5 : 0.6,
+    fontSize: isMobile ? 0.35 : 0.5,
     color: "#ffffff",
     textAlign: 'center' as const,
   };
 
   const emailFontProps = {
     font: "./soria-font.ttf",
-    fontSize: isMobile ? 0.45 : 0.55,
+    fontSize: isMobile ? 0.32 : 0.45,
     color: "#ffffff",
     textAlign: 'center' as const,
   };
 
-  const titlePosition: [number, number, number] = [0, isMobile ? 1 : 2, -10];
-  const subtitlePosition: [number, number, number] = [0, isMobile ? -1 : 0, -10];
-  const emailPosition: [number, number, number] = [0, isMobile ? -2.2 : -1.2, -10];
+  const titlePosition: [number, number, number] = [0, isMobile ? 0.5 : 1.5, -10];
+  const subtitlePosition: [number, number, number] = [0, isMobile ? -0.8 : -0.2, -10];
+  const emailPosition: [number, number, number] = [0, isMobile ? -1.6 : -0.9, -10];
 
   return (
     <>
@@ -109,7 +109,7 @@ const Hero = () => {
         position={titlePosition}
         {...fontProps}
         ref={titleRef}
-        maxWidth={isMobile ? 8 : 20}
+        maxWidth={isMobile ? 6 : 15}
         anchorX="center"
         anchorY="middle"
       >
@@ -119,7 +119,7 @@ const Hero = () => {
         position={subtitlePosition}
         {...subtitleFontProps}
         ref={subtitleRef}
-        maxWidth={isMobile ? 8 : 20}
+        maxWidth={isMobile ? 6 : 15}
         anchorX="center"
         anchorY="middle"
       >
@@ -129,7 +129,7 @@ const Hero = () => {
         position={emailPosition}
         {...emailFontProps}
         ref={emailRef}
-        maxWidth={isMobile ? 8 : 20}
+        maxWidth={isMobile ? 6 : 15}
         anchorX="center"
         anchorY="middle"
         onClick={() => window.open('mailto:Contact@DontFollowPat.com', '_blank')}
