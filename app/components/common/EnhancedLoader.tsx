@@ -79,7 +79,7 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
     if (progress >= 96 && progress < 100) {
       const stuckTimer = setTimeout(() => {
         setIsStuck(true);
-      }, 2000); // Mark as stuck after 2 seconds
+      }, 800); // Mark as stuck after 0.8 seconds - quick feedback
       return () => clearTimeout(stuckTimer);
     } else {
       setIsStuck(false);
@@ -252,21 +252,32 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
                 style={{
                   width: `${progress}%`,
                   background: 'linear-gradient(90deg, #0096c7, #00b4d8, #48cae4)',
-                  boxShadow: '0 0 20px rgba(0, 180, 216, 0.6)',
                 }}
                 initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3 }}
+                animate={{
+                  width: `${progress}%`,
+                  boxShadow: isStuck
+                    ? [
+                        '0 0 20px rgba(0, 180, 216, 0.6)',
+                        '0 0 30px rgba(0, 180, 216, 0.9)',
+                        '0 0 20px rgba(0, 180, 216, 0.6)'
+                      ]
+                    : '0 0 20px rgba(0, 180, 216, 0.6)'
+                }}
+                transition={{
+                  width: { duration: 0.3 },
+                  boxShadow: isStuck ? { duration: 1.2, repeat: Infinity, ease: 'easeInOut' } : { duration: 0 }
+                }}
               >
-                {/* Animated scan line */}
+                {/* Animated scan line - always visible and smooth */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
                   animate={{
                     x: ['-100%', '200%'],
                   }}
                   transition={{
                     repeat: Infinity,
-                    duration: 2,
+                    duration: 1.5, // Faster for more visible movement
                     ease: 'linear',
                   }}
                 />
@@ -290,8 +301,18 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
               </span>
               <motion.span
                 className="text-base md:text-lg font-bold flex-shrink-0"
-                animate={isStuck ? { opacity: [1, 0.5, 1] } : { scale: [1, 1.1, 1] }}
-                transition={{ duration: isStuck ? 1 : 0.5, repeat: Infinity }}
+                animate={isStuck
+                  ? {
+                      scale: [1, 1.05, 1],
+                      textShadow: [
+                        '0 0 10px rgba(0, 255, 255, 0.5)',
+                        '0 0 20px rgba(0, 255, 255, 0.8)',
+                        '0 0 10px rgba(0, 255, 255, 0.5)'
+                      ]
+                    }
+                  : { scale: [1, 1.1, 1] }
+                }
+                transition={{ duration: isStuck ? 1.2 : 0.5, repeat: Infinity, ease: 'easeInOut' }}
                 style={{ textShadow: '0 0 10px rgba(0, 255, 255, 0.5)' }}
               >
                 {Math.floor(progress)}%

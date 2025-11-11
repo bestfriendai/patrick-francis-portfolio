@@ -61,7 +61,7 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
           console.log('Fallback: Force loading completion at', progress);
           setIsReady(true);
         }
-      }, 3000); // Wait 3 seconds before forcing
+      }, 1500); // Wait 1.5 seconds before forcing - quick but not jarring
 
       return () => clearTimeout(fallbackTimeout);
     }
