@@ -4,38 +4,6 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Canvas3DAnimation from '../animations/Canvas3DAnimation';
 import { isMobile } from 'react-device-detect';
-import { Canvas } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
-
-// Loading Globe Component
-function LoadingGlobe() {
-  const gltf = useGLTF('/models/smallglobe.glb');
-
-  useEffect(() => {
-    // Set up materials with glow
-    gltf.scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        if (mesh.material) {
-          const mat = mesh.material as THREE.MeshStandardMaterial;
-          mat.emissive = new THREE.Color(0x64c8ff);
-          mat.emissiveIntensity = 0.5;
-          mat.side = THREE.DoubleSide;
-          mat.needsUpdate = true;
-        }
-      }
-    });
-  }, [gltf]);
-
-  return (
-    <group scale={0.3}>
-      <primitive object={gltf.scene} rotation={[0, 0, 0]} />
-      <ambientLight intensity={0.5} />
-      <pointLight position={[5, 5, 5]} intensity={100} />
-    </group>
-  );
-}
 
 interface LoadingStage {
   threshold: number;
@@ -88,9 +56,13 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
   }, [currentStage]);
 
   // Initialize Matrix columns - fewer on mobile for better performance
+  // Delay initialization to not block first paint
   useEffect(() => {
-    const columns = Array.from({ length: isMobile ? 8 : 25 }, () => Math.random() * 100);
-    setMatrixColumns(columns);
+    const timer = setTimeout(() => {
+      const columns = Array.from({ length: isMobile ? 6 : 15 }, () => Math.random() * 100);
+      setMatrixColumns(columns);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   // Rotate tips every 3 seconds
@@ -113,33 +85,35 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-      {/* Matrix Rain Effect - Optimized for mobile */}
-      <div className={`absolute inset-0 overflow-hidden pointer-events-none ${isMobile ? 'opacity-10' : 'opacity-20'}`}>
-        {matrixColumns.map((offset, i) => (
-          <motion.div
-            key={i}
-            className="absolute top-0 text-cyan-400 text-xs font-mono"
-            style={{
-              left: `${(i / matrixColumns.length) * 100}%`,
-              textShadow: '0 0 5px rgba(0, 255, 255, 0.5)',
-            }}
-            initial={{ y: -100 }}
-            animate={{
-              y: ['0vh', '120vh'],
-            }}
-            transition={{
-              duration: isMobile ? 10 : 8 + Math.random() * 4,
-              repeat: Infinity,
-              delay: offset / 20,
-              ease: 'linear',
-            }}
-          >
-            {Array.from({ length: isMobile ? 12 : 20 }, () =>
-              String.fromCharCode(33 + Math.random() * 94)
-            ).join('\n')}
-          </motion.div>
-        ))}
-      </div>
+      {/* Matrix Rain Effect - Only render after columns are initialized */}
+      {matrixColumns.length > 0 && (
+        <div className={`absolute inset-0 overflow-hidden pointer-events-none ${isMobile ? 'opacity-10' : 'opacity-20'}`}>
+          {matrixColumns.map((offset, i) => (
+            <motion.div
+              key={i}
+              className="absolute top-0 text-cyan-400 text-xs font-mono"
+              style={{
+                left: `${(i / matrixColumns.length) * 100}%`,
+                textShadow: '0 0 5px rgba(0, 255, 255, 0.5)',
+              }}
+              initial={{ y: -100 }}
+              animate={{
+                y: ['0vh', '120vh'],
+              }}
+              transition={{
+                duration: isMobile ? 12 : 10 + Math.random() * 4,
+                repeat: Infinity,
+                delay: offset / 20,
+                ease: 'linear',
+              }}
+            >
+              {Array.from({ length: isMobile ? 10 : 15 }, () =>
+                String.fromCharCode(33 + Math.random() * 94)
+              ).join('\n')}
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Grid overlay */}
       <div className="absolute inset-0 opacity-5 pointer-events-none"
@@ -368,6 +342,3 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
     </AnimatePresence>
   );
 };
-
-// Preload the small globe model
-useGLTF.preload('/models/smallglobe.glb');

@@ -14,7 +14,7 @@ const nextConfig = {
 
   // Experimental features for better performance
   experimental: {
-    optimizePackageImports: ['framer-motion', '@react-three/drei', '@react-three/fiber'],
+    optimizePackageImports: ['framer-motion', '@react-three/drei', '@react-three/fiber', 'three', 'gsap'],
   },
 
   // Webpack optimization

@@ -46,8 +46,8 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
   // Wait for assets to load AND render before showing
   useEffect(() => {
     if (progress === 100 && !isReady) {
-      // Only transition when 100% loaded, with small delay for smooth transition
-      const transitionDelay = 300;
+      // Immediate transition for snappier feel
+      const transitionDelay = 150;
 
       setTimeout(() => {
         setIsReady(true);
@@ -60,7 +60,7 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
       // Fade in smoothly as loader fades out - faster transition
       gsap.to('.base-canvas', {
         opacity: 1,
-        duration: 0.5,
+        duration: 0.4,
         delay: 0,
         ease: 'power2.out',
         pointerEvents: 'auto'
@@ -94,11 +94,13 @@ const CanvasLoader = (props: { children: React.ReactNode }) => {
           shadows
           style={canvasStyle}
           ref={canvasRef}
-          dpr={isMobile ? [1.5, 2] : [1, 2]}
+          dpr={isMobile ? [1, 1.5] : [1, 2]}
           gl={{
-            antialias: true,
+            antialias: !isMobile, // Disable antialiasing on mobile for better performance
             alpha: true,
-            powerPreference: isMobile ? "high-performance" : "high-performance",
+            powerPreference: "high-performance",
+            stencil: false, // Disable stencil buffer for better performance
+            depth: true,
           }}
           camera={{
             fov: 50,

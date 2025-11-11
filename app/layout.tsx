@@ -6,11 +6,15 @@ import "./globals.css";
 const soriaFont = localFont({
   src: "../public/soria-font.ttf",
   variable: "--font-soria",
+  display: 'swap', // Use font-display: swap for faster initial render
+  preload: true,
 });
 
 const vercettiFont = localFont({
   src: "../public/Vercetti-Regular.woff",
   variable: "--font-vercetti",
+  display: 'swap', // Use font-display: swap for faster initial render
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -122,15 +126,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="overscroll-y-none">
       <head>
-        {/* Preload critical assets */}
-        <link rel="preload" href="/soria-font.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
-        <link rel="preload" href="/Vercetti-Regular.woff" as="font" type="font/woff" crossOrigin="anonymous" />
-
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
         {/* Preconnect to critical domains */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+        {/* Inline critical CSS for immediate paint */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          body{margin:0;overscroll-behavior:none;background:#000;color:#fff}
+          *{-webkit-user-select:none;user-select:none}
+          .loader-fallback{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to bottom,#000814,#001d3d,#000814);color:#00d9ff;font-family:monospace;z-index:9999}
+        ` }} />
 
         <script
           type="application/ld+json"
@@ -140,6 +147,32 @@ export default function RootLayout({
       <body
         className={`${soriaFont.variable} ${vercettiFont.variable} font-sans antialiased`}
       >
+        {/* Instant loading fallback - shows immediately before JS loads */}
+        <noscript>
+          <div className="loader-fallback">
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>PATRICK FRANCIS</div>
+              <div>Loading portfolio...</div>
+            </div>
+          </div>
+        </noscript>
+        <div id="initial-loader" className="loader-fallback" style={{ display: 'flex' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '1rem', color: '#00d9ff' }}>PATRICK FRANCIS</div>
+            <div style={{ color: '#00d9ff', fontFamily: 'monospace' }}>Loading portfolio...</div>
+          </div>
+        </div>
+        <script dangerouslySetInnerHTML={{ __html: `
+          // Hide fallback loader once React takes over
+          if (typeof window !== 'undefined') {
+            window.addEventListener('load', function() {
+              setTimeout(function() {
+                var loader = document.getElementById('initial-loader');
+                if (loader) loader.style.display = 'none';
+              }, 100);
+            });
+          }
+        ` }} />
         {children}
       </body>
       <GoogleAnalytics gaId={'G-7WD4HM3XRE'}/>
