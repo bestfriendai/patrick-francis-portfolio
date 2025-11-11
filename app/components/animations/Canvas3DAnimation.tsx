@@ -12,8 +12,8 @@ interface Canvas3DAnimationProps {
 
 const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
   animationType,
-  width = 180,
-  height = 180,
+  width = 280, // INCREASED from 180
+  height = 280, // INCREASED from 180
   className = '',
   style = {}
 }) => {
@@ -82,11 +82,11 @@ const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
 
         dots.forEach((dot: any) => {
           let { x, y, z } = dot;
-          let nX = x * Math.cos(rotY) - z * Math.sin(rotY);
+          const nX = x * Math.cos(rotY) - z * Math.sin(rotY);
           let nZ = x * Math.sin(rotY) + z * Math.cos(rotY);
           x = nX;
           z = nZ;
-          let nY = y * Math.cos(rotX) - z * Math.sin(rotX);
+          const nY = y * Math.cos(rotX) - z * Math.sin(rotX);
           nZ = y * Math.sin(rotX) + z * Math.cos(rotX);
           y = nY;
           z = nZ;
@@ -94,7 +94,7 @@ const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
           const pX = centerX + x;
           const pY = centerY + y;
           const distToScan = Math.abs(y - scanLine);
-          let scanInfluence =
+          const scanInfluence =
             distToScan < scanWidth
               ? Math.cos((distToScan / scanWidth) * (Math.PI / 2))
               : 0;
@@ -295,11 +295,11 @@ const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
 
         points.forEach((p: any) => {
           let { x, y, z } = p;
-          let nX = x * Math.cos(rotY) - z * Math.sin(rotY);
+          const nX = x * Math.cos(rotY) - z * Math.sin(rotY);
           let nZ = x * Math.sin(rotY) + z * Math.cos(rotY);
           x = nX;
           z = nZ;
-          let nY = y * Math.cos(rotX) - z * Math.sin(rotX);
+          const nY = y * Math.cos(rotX) - z * Math.sin(rotX);
           nZ = y * Math.sin(rotX) + z * Math.cos(rotX);
           y = nY;
           z = nZ;
@@ -451,13 +451,13 @@ const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
           }
           const cY = Math.cos(rotY);
           const sY = Math.sin(rotY);
-          let tX = x * cY - z * sY;
+          const tX = x * cY - z * sY;
           let tZ = x * sY + z * cY;
           x = tX;
           z = tZ;
           const cX = Math.cos(rotX);
           const sX = Math.sin(rotX);
-          let tY = y * cX - z * sX;
+          const tY = y * cX - z * sX;
           tZ = y * sX + z * cX;
           y = tY;
           z = tZ;
@@ -573,13 +573,13 @@ const Canvas3DAnimation: React.FC<Canvas3DAnimationProps> = ({
           }
           const cY = Math.cos(rotY);
           const sY = Math.sin(rotY);
-          let tX = x * cY - z * sY;
+          const tX = x * cY - z * sY;
           let tZ = x * sY + z * cY;
           x = tX;
           z = tZ;
           const cX = Math.cos(rotX);
           const sX = Math.sin(rotX);
-          let tY = y * cX - z * sX;
+          const tY = y * cX - z * sX;
           tZ = y * sX + z * cX;
           y = tY;
           z = tZ;

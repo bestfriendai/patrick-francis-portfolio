@@ -4,6 +4,38 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Canvas3DAnimation from '../animations/Canvas3DAnimation';
 import { isMobile } from 'react-device-detect';
+import { Canvas } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
+
+// Loading Globe Component
+function LoadingGlobe() {
+  const gltf = useGLTF('/models/smallglobe.glb');
+
+  useEffect(() => {
+    // Set up materials with glow
+    gltf.scene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material) {
+          const mat = mesh.material as THREE.MeshStandardMaterial;
+          mat.emissive = new THREE.Color(0x64c8ff);
+          mat.emissiveIntensity = 0.5;
+          mat.side = THREE.DoubleSide;
+          mat.needsUpdate = true;
+        }
+      }
+    });
+  }, [gltf]);
+
+  return (
+    <group scale={0.3}>
+      <primitive object={gltf.scene} rotation={[0, 0, 0]} />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[5, 5, 5]} intensity={100} />
+    </group>
+  );
+}
 
 interface LoadingStage {
   threshold: number;
@@ -12,21 +44,22 @@ interface LoadingStage {
 }
 
 const loadingStages: LoadingStage[] = [
-  { threshold: 0, message: "Building something cool as F*CK...", icon: "🔥" },
-  { threshold: 20, message: "Loading luxury rides...", icon: "🏎️" },
-  { threshold: 40, message: "Preparing the experience...", icon: "✨" },
-  { threshold: 60, message: "Almost there...", icon: "🚀" },
-  { threshold: 80, message: "Final touches...", icon: "💎" },
-  { threshold: 95, message: "Ready to flex...", icon: "💪" },
+  { threshold: 0, message: "Initializing systems...", icon: ">" },
+  { threshold: 15, message: "Loading 3D models...", icon: "█" },
+  { threshold: 30, message: "Rendering luxury rides...", icon: "▓" },
+  { threshold: 50, message: "Compiling animations...", icon: "▒" },
+  { threshold: 70, message: "Optimizing experience...", icon: "░" },
+  { threshold: 85, message: "Final systems check...", icon: "■" },
+  { threshold: 95, message: "Ready to launch...", icon: "✓" },
 ];
 
 const loadingTips = [
-  "Entrepreneur, App Developer, and Author",
-  "Creator of PrayAI - Your AI Prayer Companion",
-  "Creator of FakeFlex - Flex Like a Boss",
-  "Building the future of mobile apps",
-  "Cool as F*CK since day one",
-  "Contact@DontFollowPat.com for collaborations",
+  "patrick.francis@init: ~$ loading portfolio",
+  "patrick.francis@init: ~$ sudo make-it-dope",
+  "patrick.francis@init: ~$ compiling awesome",
+  "patrick.francis@init: ~$ npm run flex",
+  "patrick.francis@init: ~$ rendering coolness",
+  "patrick.francis@init: ~$ git push --force origin main",
 ];
 
 interface EnhancedLoaderProps {
@@ -36,6 +69,8 @@ interface EnhancedLoaderProps {
 export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
   const [currentStage, setCurrentStage] = useState(loadingStages[0]);
   const [tipIndex, setTipIndex] = useState(0);
+  const [matrixColumns, setMatrixColumns] = useState<number[]>([]);
+  const [terminalLines, setTerminalLines] = useState<string[]>([]);
 
   useEffect(() => {
     // Update stage based on progress
@@ -44,6 +79,19 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
       .find(s => progress >= s.threshold) || loadingStages[0];
     setCurrentStage(stage);
   }, [progress]);
+
+  // Add terminal line when stage changes
+  useEffect(() => {
+    if (currentStage.message) {
+      setTerminalLines(prev => [...prev, `> ${currentStage.message}`].slice(-5));
+    }
+  }, [currentStage]);
+
+  // Initialize Matrix columns
+  useEffect(() => {
+    const columns = Array.from({ length: isMobile ? 15 : 25 }, () => Math.random() * 100);
+    setMatrixColumns(columns);
+  }, []);
 
   // Rotate tips every 3 seconds
   useEffect(() => {
@@ -57,196 +105,238 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
     <AnimatePresence>
       {progress < 100 && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{
+            background: 'linear-gradient(to bottom, #000814, #001d3d, #000814)',
+          }}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
         >
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <motion.div
-          className="absolute inset-0 bg-gradient-radial from-blue-500/20 via-transparent to-transparent"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+      {/* Matrix Rain Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+        {matrixColumns.map((offset, i) => (
+          <motion.div
+            key={i}
+            className="absolute top-0 text-cyan-400 text-xs font-mono"
+            style={{
+              left: `${(i / matrixColumns.length) * 100}%`,
+              textShadow: '0 0 5px rgba(0, 255, 255, 0.5)',
+            }}
+            initial={{ y: -100 }}
+            animate={{
+              y: ['0vh', '120vh'],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              delay: offset / 20,
+              ease: 'linear',
+            }}
+          >
+            {Array.from({ length: 20 }, () =>
+              String.fromCharCode(33 + Math.random() * 94)
+            ).join('\n')}
+          </motion.div>
+        ))}
       </div>
 
+      {/* Grid overlay */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+        }}
+      />
+
       {/* Main loader content */}
-      <div className="relative z-10 flex flex-col items-center gap-8 px-4">
-        {/* 3D Canvas Animation from /dist folder - Skip on mobile for better performance */}
+      <div className="relative z-10 flex flex-col items-center gap-4 md:gap-6 px-3 md:px-4 w-full max-w-4xl">
+        {/* Terminal Window */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="w-full"
+          style={{
+            background: 'rgba(0, 20, 40, 0.9)',
+            border: '2px solid rgba(0, 255, 255, 0.3)',
+            borderRadius: isMobile ? '8px' : '12px',
+            boxShadow: '0 0 30px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0, 100, 150, 0.1)',
+          }}
+        >
+          {/* Terminal Header */}
+          <div className="flex items-center gap-2 px-3 md:px-4 py-2 md:py-3 border-b border-cyan-900/50">
+            <div className="flex gap-1.5 md:gap-2">
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500/80" />
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-500/80" />
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500/80" />
+            </div>
+            <span className="ml-2 md:ml-4 text-cyan-400 text-xs md:text-sm font-mono truncate">
+              {isMobile ? 'patrick@terminal' : 'patrick.francis@terminal'}
+            </span>
+          </div>
+
+          {/* Terminal Content */}
+          <div className="p-4 md:p-6 font-mono text-xs md:text-sm">
+            {/* Name Display */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="mb-4 md:mb-6"
+            >
+              <div className="text-cyan-400 text-2xl md:text-5xl font-bold mb-2 tracking-wider break-words"
+                style={{ textShadow: '0 0 10px rgba(0, 255, 255, 0.5)' }}
+              >
+                {'>'} PATRICK {isMobile && <br />}FRANCIS
+              </div>
+              <motion.div
+                className="text-cyan-300 text-sm md:text-xl"
+                animate={{ opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                Loading some dope sh*t hold on...
+              </motion.div>
+            </motion.div>
+
+            {/* Terminal Output Lines - Only show on desktop or when there are lines */}
+            {(!isMobile || terminalLines.length > 0) && (
+              <div className="space-y-1 mb-3 md:mb-4 text-cyan-400/80 text-[10px] md:text-sm max-h-20 overflow-hidden">
+                {terminalLines.slice(-3).map((line, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="truncate"
+                  >
+                    {line}
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {/* Command Prompt with Cursor - Simplified on mobile */}
+            <div className="flex items-center gap-1 md:gap-2 text-cyan-400 text-[10px] md:text-sm overflow-hidden">
+              <span className="truncate">{loadingTips[tipIndex]}</span>
+              <motion.span
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="flex-shrink-0"
+              >
+                _
+              </motion.span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* 3D Animation - Smaller and to the side on desktop */}
         {!isMobile && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
+            className="absolute right-8 top-8"
           >
             <Canvas3DAnimation
               animationType="sphere-scan"
-              width={140}
-              height={140}
+              width={150}
+              height={150}
               className="drop-shadow-2xl"
             />
           </motion.div>
         )}
 
-        {/* Logo animation */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-4xl md:text-6xl font-bold text-white text-center"
-        >
-          <motion.span
-            className="bg-gradient-to-r from-blue-400 to-white bg-clip-text text-transparent"
-            animate={{
-              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            style={{
-              backgroundSize: '200% 200%',
-            }}
-          >
-            DontFollowPat
-          </motion.span>
-        </motion.div>
-
-        {/* Progress bar with glow and shimmer */}
-        <div className="relative w-full max-w-sm md:max-w-md h-2 bg-gray-800 rounded-full overflow-hidden">
-          <motion.div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-blue-300 rounded-full"
-            style={{ width: `${progress}%` }}
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Shimmer effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
-              animate={{
-                x: ['-100%', '200%'],
-              }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.5,
-                ease: 'linear',
-              }}
-            />
-
-            {/* Glow effect */}
-            <div
-              className="absolute inset-0 blur-sm"
+        {/* Enhanced Progress Section */}
+        <div className="w-full space-y-3 md:space-y-4">
+          {/* Progress Bar Container */}
+          <div className="relative">
+            <div className="relative w-full h-2.5 md:h-3 bg-black/50 rounded-lg overflow-hidden"
               style={{
-                boxShadow: '0 0 20px rgba(100, 200, 255, 0.8)',
-              }}
-            />
-          </motion.div>
-
-          {/* Particle effects - Reduce count for performance */}
-          {!isMobile && [...Array(3)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-blue-400 rounded-full"
-              animate={{
-                x: [`${progress}%`, `${progress + Math.random() * 5}%`],
-                y: [0, -20],
-                opacity: [1, 0],
-              }}
-              transition={{
-                duration: 0.8,
-                repeat: Infinity,
-                delay: i * 0.15,
-                ease: "easeOut",
-              }}
-              style={{ left: 0, top: '50%' }}
-            />
-          ))}
-        </div>
-
-        {/* Progress percentage with pulse */}
-        <motion.div
-          className="text-3xl md:text-4xl font-bold text-white"
-          animate={{
-            scale: [1, 1.05, 1],
-          }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          {Math.floor(progress)}%
-        </motion.div>
-
-        {/* Current stage with icon animation */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStage.message}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-3 text-lg md:text-xl text-gray-300"
-          >
-            <motion.span
-              className="text-2xl md:text-3xl"
-              animate={{
-                rotate: [0, 10, -10, 0],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: 0.6,
-                ease: "easeInOut",
+                border: '1px solid rgba(0, 255, 255, 0.3)',
+                boxShadow: 'inset 0 0 10px rgba(0, 100, 150, 0.3)',
               }}
             >
-              {currentStage.icon}
-            </motion.span>
-            <span>{currentStage.message}</span>
-          </motion.div>
-        </AnimatePresence>
+              <motion.div
+                className="absolute inset-y-0 left-0 rounded-lg"
+                style={{
+                  width: `${progress}%`,
+                  background: 'linear-gradient(90deg, #0096c7, #00b4d8, #48cae4)',
+                  boxShadow: '0 0 20px rgba(0, 180, 216, 0.6)',
+                }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Animated scan line */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                  animate={{
+                    x: ['-100%', '200%'],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2,
+                    ease: 'linear',
+                  }}
+                />
+              </motion.div>
 
-        {/* Rotating tips with fade */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={tipIndex}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.5 }}
-            className="text-sm md:text-base text-gray-400 italic max-w-md text-center px-4"
-          >
-            {loadingTips[tipIndex]}
-          </motion.div>
-        </AnimatePresence>
+              {/* Progress segments indicator */}
+              <div className="absolute inset-0 flex">
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                  <div
+                    key={i}
+                    className="flex-1 border-r border-cyan-900/30"
+                  />
+                ))}
+              </div>
+            </div>
 
-        {/* Pulsing dots indicator */}
-        <div className="flex gap-2 mt-4">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="w-2 h-2 bg-blue-400 rounded-full"
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                delay: i * 0.2,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
+            {/* Progress Text and Percentage */}
+            <div className="flex justify-between items-center mt-2 text-cyan-400 font-mono text-xs md:text-sm">
+              <span className="truncate mr-2">{currentStage.icon} {currentStage.message}</span>
+              <motion.span
+                className="text-base md:text-lg font-bold flex-shrink-0"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 0.5, repeat: Infinity }}
+                style={{ textShadow: '0 0 10px rgba(0, 255, 255, 0.5)' }}
+              >
+                {Math.floor(progress)}%
+              </motion.span>
+            </div>
+          </div>
+
+          {/* System Stats - Interactive Elements */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 text-xs font-mono">
+            {[
+              { label: 'CPU', value: `${Math.min(95, progress + 5)}%` },
+              { label: 'MEMORY', value: `${Math.floor(512 + progress * 5)}MB` },
+              { label: 'GPU', value: `${Math.min(88, progress + 8)}%` },
+              { label: 'NETWORK', value: `${Math.floor(10 + progress * 2)}MB/s` },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-black/40 border border-cyan-900/50 rounded px-2 py-1.5 md:px-3 md:py-2"
+                style={{ boxShadow: '0 0 10px rgba(0, 100, 150, 0.2)' }}
+              >
+                <div className="text-cyan-600 text-[9px] md:text-[10px] uppercase">{stat.label}</div>
+                <motion.div
+                  className="text-cyan-400 font-bold text-xs md:text-sm"
+                  animate={{ opacity: [0.7, 1, 0.7] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                >
+                  {stat.value}
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -278,3 +368,6 @@ export const EnhancedLoader = ({ progress }: EnhancedLoaderProps) => {
     </AnimatePresence>
   );
 };
+
+// Preload the small globe model
+useGLTF.preload('/models/smallglobe.glb');

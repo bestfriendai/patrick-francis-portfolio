@@ -1,7 +1,7 @@
 'use client';
 
 import { useGLTF, useScroll } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useEffect, useState, memo } from 'react';
 import * as THREE from 'three';
 
@@ -11,6 +11,10 @@ export const Jeep = memo(function Jeep() {
   const carRef = useRef<THREE.Group>(null);
   const data = useScroll();
   const [isMobile, setIsMobile] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [rotationOffset, setRotationOffset] = useState({ x: 0, y: 0 });
+  const { camera, gl } = useThree();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -62,12 +66,23 @@ export const Jeep = memo(function Jeep() {
       // Same spiral motion as BMW but offset EVEN MORE to left (closer on mobile)
       const xPos = isMobile ? -3 : (-10 + 3 * Math.sin(scrollOffset * Math.PI * 1.5) - scrollOffset * 1.5);
 
-      groupRef.current.position.set(xPos, yPos, zPos);
+      // Apply drag offset if being dragged (desktop only)
+      if (isDragging && !isMobile) {
+        groupRef.current.position.set(xPos + dragOffset.x, yPos + dragOffset.y, zPos);
+      } else {
+        groupRef.current.position.set(xPos, yPos, zPos);
+      }
 
       // Jeep: Chaotic tumbling - all axes rotating heavily
-      carRef.current.rotation.x += delta * (0.9 + scrollOffset * 1.8); // Strong X flip
-      carRef.current.rotation.y += delta * (0.7 + scrollOffset * 2.2); // Strong Y spin
-      carRef.current.rotation.z += delta * (0.8 + scrollOffset * 1.5); // Strong Z barrel roll
+      if (!isDragging) {
+        carRef.current.rotation.x += delta * (0.9 + scrollOffset * 1.8); // Strong X flip
+        carRef.current.rotation.y += delta * (0.7 + scrollOffset * 2.2); // Strong Y spin
+        carRef.current.rotation.z += delta * (0.8 + scrollOffset * 1.5); // Strong Z barrel roll
+      } else {
+        // Apply user rotation when dragging
+        carRef.current.rotation.x += rotationOffset.y;
+        carRef.current.rotation.y += rotationOffset.x;
+      }
 
       // Mobile-friendly sizing
       const baseScale = isMobile ? 6 : 9;
@@ -98,9 +113,60 @@ export const Jeep = memo(function Jeep() {
     }
   });
 
+  const handlePointerDown = (e: any) => {
+    if (isMobile) return;
+    e.stopPropagation();
+    setIsDragging(true);
+    gl.domElement.style.cursor = 'grabbing';
+  };
+
+  const handlePointerUp = () => {
+    if (isMobile) return;
+    setIsDragging(false);
+    setDragOffset({ x: 0, y: 0 });
+    setRotationOffset({ x: 0, y: 0 });
+    gl.domElement.style.cursor = 'grab';
+  };
+
+  const handlePointerMove = (e: any) => {
+    if (!isDragging || isMobile) return;
+    e.stopPropagation();
+
+    const { movementX, movementY } = e;
+    setDragOffset(prev => ({
+      x: prev.x + movementX * 0.02,
+      y: prev.y - movementY * 0.02
+    }));
+
+    // Calculate rotation based on mouse movement
+    setRotationOffset({
+      x: movementX * 0.01,
+      y: movementY * 0.01
+    });
+  };
+
+  const handlePointerOver = () => {
+    if (!isMobile && !isDragging) {
+      gl.domElement.style.cursor = 'grab';
+    }
+  };
+
+  const handlePointerOut = () => {
+    if (!isMobile) {
+      gl.domElement.style.cursor = 'auto';
+    }
+  };
+
   return (
     <group ref={groupRef}>
-      <group ref={carRef}>
+      <group
+        ref={carRef}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerMove={handlePointerMove}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      >
         {/* Jeep model - mobile optimized */}
         <primitive
           object={gltf.scene}

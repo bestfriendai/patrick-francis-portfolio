@@ -29,8 +29,8 @@ const animations: AnimationConfig[] = [
       mobile: { left: '5%', top: '15%' }
     },
     size: {
-      desktop: { width: 120, height: 120 },
-      mobile: { width: 80, height: 80 }
+      desktop: { width: 240, height: 240 },
+      mobile: { width: 160, height: 160 }
     },
     zIndex: 10
   },
@@ -43,8 +43,8 @@ const animations: AnimationConfig[] = [
       mobile: { right: '5%', top: '15%' }
     },
     size: {
-      desktop: { width: 120, height: 120 },
-      mobile: { width: 80, height: 80 }
+      desktop: { width: 240, height: 240 },
+      mobile: { width: 160, height: 160 }
     },
     zIndex: 10
   },
@@ -59,8 +59,8 @@ const animations: AnimationConfig[] = [
       mobile: { left: '10%', top: '30%' }
     },
     size: {
-      desktop: { width: 200, height: 200 },
-      mobile: { width: 140, height: 140 }
+      desktop: { width: 400, height: 400 },
+      mobile: { width: 280, height: 280 }
     },
     zIndex: 15
   },
@@ -73,8 +73,8 @@ const animations: AnimationConfig[] = [
       mobile: { right: '5%', top: '20%' }
     },
     size: {
-      desktop: { width: 150, height: 150 },
-      mobile: { width: 100, height: 100 }
+      desktop: { width: 300, height: 300 },
+      mobile: { width: 200, height: 200 }
     },
     zIndex: 15
   },
@@ -89,8 +89,8 @@ const animations: AnimationConfig[] = [
       mobile: { left: '50%', top: '35%', transform: 'translate(-50%, -50%)' }
     },
     size: {
-      desktop: { width: 300, height: 300 },
-      mobile: { width: 200, height: 200 }
+      desktop: { width: 600, height: 600 },
+      mobile: { width: 400, height: 400 }
     },
     zIndex: 20
   },
@@ -103,8 +103,8 @@ const animations: AnimationConfig[] = [
       mobile: { left: '5%', bottom: '20%' }
     },
     size: {
-      desktop: { width: 180, height: 180 },
-      mobile: { width: 120, height: 120 }
+      desktop: { width: 360, height: 360 },
+      mobile: { width: 240, height: 240 }
     },
     zIndex: 18
   },
@@ -119,8 +119,8 @@ const animations: AnimationConfig[] = [
       mobile: { right: '5%', top: '25%' }
     },
     size: {
-      desktop: { width: 200, height: 200 },
-      mobile: { width: 140, height: 140 }
+      desktop: { width: 400, height: 400 },
+      mobile: { width: 280, height: 280 }
     },
     zIndex: 16
   },
@@ -133,8 +133,8 @@ const animations: AnimationConfig[] = [
       mobile: { left: '5%', top: '30%' }
     },
     size: {
-      desktop: { width: 140, height: 140 },
-      mobile: { width: 100, height: 100 }
+      desktop: { width: 280, height: 280 },
+      mobile: { width: 200, height: 200 }
     },
     zIndex: 16
   },
@@ -149,8 +149,8 @@ const animations: AnimationConfig[] = [
       mobile: { left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }
     },
     size: {
-      desktop: { width: 400, height: 400 },
-      mobile: { width: 280, height: 280 }
+      desktop: { width: 800, height: 800 },
+      mobile: { width: 560, height: 560 }
     },
     zIndex: 5
   }

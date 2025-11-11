@@ -1,7 +1,7 @@
 'use client';
 
 import { useGLTF, useScroll } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 
@@ -11,6 +11,10 @@ export function Bmw() {
   const carRef = useRef<THREE.Group>(null);
   const data = useScroll();
   const [isMobile, setIsMobile] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [rotationOffset, setRotationOffset] = useState({ x: 0, y: 0 });
+  const { camera, gl } = useThree();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -57,19 +61,30 @@ export function Bmw() {
       // Spiral/arc motion for more dynamic fall
       const xPos = isMobile ? 0 : (3 * Math.sin(scrollOffset * Math.PI * 1.5) - scrollOffset * 1.5);
 
-      groupRef.current.position.set(xPos, yPos, zPos);
+      // Apply drag offset if being dragged (desktop only)
+      if (isDragging && !isMobile) {
+        groupRef.current.position.set(xPos + dragOffset.x, yPos + dragOffset.y, zPos);
+      } else {
+        groupRef.current.position.set(xPos, yPos, zPos);
+      }
 
       // BMW: Balanced rotation - smooth tumbling on all axes
-      carRef.current.rotation.x += delta * (0.6 + scrollOffset * 1.5); // Medium X flip
-      carRef.current.rotation.z += delta * (0.7 + scrollOffset * 1.8); // Medium Z barrel roll
-      carRef.current.rotation.y += delta * (0.5 + scrollOffset * 1.2); // Slow Y spin
+      if (!isDragging) {
+        carRef.current.rotation.x += delta * (0.6 + scrollOffset * 1.5); // Medium X flip
+        carRef.current.rotation.z += delta * (0.7 + scrollOffset * 1.8); // Medium Z barrel roll
+        carRef.current.rotation.y += delta * (0.5 + scrollOffset * 1.2); // Slow Y spin
+      } else {
+        // Apply user rotation when dragging
+        carRef.current.rotation.x += rotationOffset.y;
+        carRef.current.rotation.y += rotationOffset.x;
+      }
 
-      // Improved scaling with smoother transition
-      const baseScale = isMobile ? 1.2 : 1.5;
+      // Improved scaling with smoother transition - slightly bigger than original
+      const baseScale = isMobile ? 1.4 : 1.8; // Slightly increased from original 1.2/1.5
 
       if (scrollOffset < 0.25) {
         // Float at normal size
-        const floatScale = baseScale + Math.sin(state.clock.elapsedTime * 2) * 0.05;
+        const floatScale = baseScale + Math.sin(state.clock.elapsedTime * 2) * 0.1;
         carRef.current.scale.set(floatScale, floatScale, floatScale);
       } else if (scrollOffset < 0.65) {
         // Gradual shrink as it approaches door
@@ -77,14 +92,14 @@ export function Bmw() {
         const easeInOut = shrinkProgress < 0.5
           ? 2 * shrinkProgress * shrinkProgress
           : 1 - Math.pow(-2 * shrinkProgress + 2, 2) / 2;
-        const midScale = isMobile ? 0.1 : 0.2;
+        const midScale = isMobile ? 0.12 : 0.24; // Slightly increased from original 0.1/0.2
         const scale = baseScale - (easeInOut * (baseScale - midScale));
         carRef.current.scale.set(scale, scale, scale);
       } else {
         // Rapid final shrink as it goes through door
         const finalProgress = (scrollOffset - 0.65) / 0.1;
-        const minScale = isMobile ? 0.01 : 0.025;
-        const midScale = isMobile ? 0.1 : 0.2;
+        const minScale = isMobile ? 0.012 : 0.03; // Slightly increased from original 0.01/0.025
+        const midScale = isMobile ? 0.12 : 0.24; // Slightly increased
         const scale = midScale - (finalProgress * (midScale - minScale));
         carRef.current.scale.set(scale, scale, scale);
       }
@@ -93,9 +108,61 @@ export function Bmw() {
     }
   });
 
+  const handlePointerDown = (e: any) => {
+    if (isMobile) return;
+    e.stopPropagation();
+    setIsDragging(true);
+    gl.domElement.style.cursor = 'grabbing';
+  };
+
+  const handlePointerUp = () => {
+    if (isMobile) return;
+    setIsDragging(false);
+    setDragOffset({ x: 0, y: 0 }); // Reset position offset when released
+    setRotationOffset({ x: 0, y: 0 }); // Reset rotation offset
+    gl.domElement.style.cursor = 'grab';
+  };
+
+  const handlePointerMove = (e: any) => {
+    if (!isDragging || isMobile) return;
+    e.stopPropagation();
+
+    // Calculate drag offset for position
+    const { movementX, movementY } = e;
+    setDragOffset(prev => ({
+      x: prev.x + movementX * 0.02,
+      y: prev.y - movementY * 0.02 // Invert Y for natural movement
+    }));
+
+    // Calculate rotation based on mouse movement
+    setRotationOffset({
+      x: movementX * 0.01, // Y-axis rotation (left-right movement)
+      y: movementY * 0.01  // X-axis rotation (up-down movement)
+    });
+  };
+
+  const handlePointerOver = () => {
+    if (!isMobile && !isDragging) {
+      gl.domElement.style.cursor = 'grab';
+    }
+  };
+
+  const handlePointerOut = () => {
+    if (!isMobile) {
+      gl.domElement.style.cursor = 'auto';
+    }
+  };
+
   return (
     <group ref={groupRef}>
-      <group ref={carRef}>
+      <group
+        ref={carRef}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerMove={handlePointerMove}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      >
         {/* BMW model - positioned off to the side to avoid text */}
         <primitive
           object={gltf.scene}

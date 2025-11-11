@@ -12,6 +12,8 @@ import WindowModel from "../models/WindowModel";
 import { Bmw } from "../models/Bmw";
 import { Porsche } from "../models/Porsche";
 import { Jeep } from "../models/Jeep";
+import { Globe } from "../models/Globe";
+import { SmallGlobe } from "../models/SmallGlobe";
 import TextWindow from "./TextWindow";
 
 const Hero = () => {
@@ -148,6 +150,12 @@ const Hero = () => {
       </Text>
       <StarsContainer />
       <CloudContainer/>
+
+      {/* Globe - loads early, no suspense needed */}
+      <Globe />
+
+      {/* Small Globe - appears in Pat's Apps section */}
+      {/* <SmallGlobe /> */}
 
       {/* Load vehicles progressively with Suspense */}
       {showVehicles && (

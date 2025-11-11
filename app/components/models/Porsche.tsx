@@ -1,7 +1,7 @@
 'use client';
 
 import { useGLTF, useScroll } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useEffect, useState, memo } from 'react';
 import * as THREE from 'three';
 
@@ -11,6 +11,10 @@ export const Porsche = memo(function Porsche() {
   const carRef = useRef<THREE.Group>(null);
   const data = useScroll();
   const [isMobile, setIsMobile] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [rotationOffset, setRotationOffset] = useState({ x: 0, y: 0 });
+  const { camera, gl } = useThree();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -62,12 +66,23 @@ export const Porsche = memo(function Porsche() {
       // Same spiral motion as BMW but offset MORE to right (closer on mobile)
       const xPos = isMobile ? 3 : (10 + 3 * Math.sin(scrollOffset * Math.PI * 1.5) - scrollOffset * 1.5);
 
-      groupRef.current.position.set(xPos, yPos, zPos);
+      // Apply drag offset if being dragged (desktop only)
+      if (isDragging && !isMobile) {
+        groupRef.current.position.set(xPos + dragOffset.x, yPos + dragOffset.y, zPos);
+      } else {
+        groupRef.current.position.set(xPos, yPos, zPos);
+      }
 
       // Porsche: Elegant spinning motion - mostly Y axis with gentle wobble
-      carRef.current.rotation.y += delta * (1.2 + scrollOffset * 3.0); // Fast Y spin
-      carRef.current.rotation.z += delta * (0.2 + Math.sin(state.clock.elapsedTime) * 0.1); // Gentle wobble
-      carRef.current.rotation.x += delta * (0.3 + scrollOffset * 0.5); // Slow X tumble
+      if (!isDragging) {
+        carRef.current.rotation.y += delta * (1.2 + scrollOffset * 3.0); // Fast Y spin
+        carRef.current.rotation.z += delta * (0.2 + Math.sin(state.clock.elapsedTime) * 0.1); // Gentle wobble
+        carRef.current.rotation.x += delta * (0.3 + scrollOffset * 0.5); // Slow X tumble
+      } else {
+        // Apply user rotation when dragging
+        carRef.current.rotation.x += rotationOffset.y;
+        carRef.current.rotation.y += rotationOffset.x;
+      }
 
       // Mobile-friendly sizing
       const baseScale = isMobile ? 6 : 9;
@@ -98,9 +113,60 @@ export const Porsche = memo(function Porsche() {
     }
   });
 
+  const handlePointerDown = (e: any) => {
+    if (isMobile) return;
+    e.stopPropagation();
+    setIsDragging(true);
+    gl.domElement.style.cursor = 'grabbing';
+  };
+
+  const handlePointerUp = () => {
+    if (isMobile) return;
+    setIsDragging(false);
+    setDragOffset({ x: 0, y: 0 });
+    setRotationOffset({ x: 0, y: 0 });
+    gl.domElement.style.cursor = 'grab';
+  };
+
+  const handlePointerMove = (e: any) => {
+    if (!isDragging || isMobile) return;
+    e.stopPropagation();
+
+    const { movementX, movementY } = e;
+    setDragOffset(prev => ({
+      x: prev.x + movementX * 0.02,
+      y: prev.y - movementY * 0.02
+    }));
+
+    // Calculate rotation based on mouse movement
+    setRotationOffset({
+      x: movementX * 0.01,
+      y: movementY * 0.01
+    });
+  };
+
+  const handlePointerOver = () => {
+    if (!isMobile && !isDragging) {
+      gl.domElement.style.cursor = 'grab';
+    }
+  };
+
+  const handlePointerOut = () => {
+    if (!isMobile) {
+      gl.domElement.style.cursor = 'auto';
+    }
+  };
+
   return (
     <group ref={groupRef}>
-      <group ref={carRef}>
+      <group
+        ref={carRef}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerMove={handlePointerMove}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      >
         {/* Porsche model - mobile optimized */}
         <primitive
           object={gltf.scene}
